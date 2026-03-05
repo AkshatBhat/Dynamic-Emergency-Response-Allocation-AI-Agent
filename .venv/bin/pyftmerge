@@ -1,8 +1,0 @@
-#!/bin/sh
-'''exec' "/Users/akshat/Data/UIUC/Spring 2026/Courses/CS 498 AI Agents in the Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/.venv/bin/python3" "$0" "$@"
-' '''
-import sys
-from fontTools.merge import main
-if __name__ == '__main__':
-    sys.argv[0] = sys.argv[0].removesuffix('.exe')
-    sys.exit(main())
