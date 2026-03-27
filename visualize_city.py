@@ -1,7 +1,11 @@
+import argparse
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+
+DEFAULT_SCENARIO_PATH = "benchmarks/tier1_basic_triage/scenario1_tier1.json"
+
 
 def load_world(filepath):
     """Loads the RescueBench JSON world file."""
@@ -9,7 +13,7 @@ def load_world(filepath):
         with open(filepath, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        print(f"Error: Could not find '{filepath}'. Make sure it's in the same directory.")
+        print(f"Error: Could not find '{filepath}'.")
         return None
 
 def find_nearest_free_lattice_cell(target_cell, occupied_cells):
@@ -466,8 +470,16 @@ def visualize_world(world_data):
     plt.show()
 
 if __name__ == "__main__":
-    # Ensure you have a city world json file in the same folder before running
-    json_filepath = 'tier1_basic_triage.json' # 'base_city_world.json'
+    parser = argparse.ArgumentParser(description="Visualize a RescueBench scenario JSON as a city graph.")
+    parser.add_argument(
+        "scenario_path",
+        nargs="?",
+        default=DEFAULT_SCENARIO_PATH,
+        help=f"Path to scenario JSON file (default: {DEFAULT_SCENARIO_PATH})",
+    )
+    args = parser.parse_args()
+
+    json_filepath = args.scenario_path
     world_data = load_world(json_filepath)
     if world_data:
         visualize_world(world_data)

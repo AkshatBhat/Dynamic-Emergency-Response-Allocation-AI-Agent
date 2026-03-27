@@ -24,13 +24,13 @@ python3 visualize_city.py
 
 Run with another JSON file (example: Tier 1):
 ```bash
-python3 -c "import visualize_city as v; w=v.load_world('tier1_basic_triage.json'); v.visualize_world(w)"
+python3 -c "import visualize_city as v; w=v.load_world('benchmarks/tier1_basic_triage/scenario1_tier1.json'); v.visualize_world(w)"
 ```
 
 ## Files
 
 - `base_city_world.json`: full baseline city world.
-- `tier1_basic_triage.json`: simplified Tier 1 scenario.
+- `benchmarks/tier1_basic_triage/scenario1_tier1.json`: simplified Tier 1 basic triage Scenario 1.
 - `visualize_city.py`: graph visualization script.
 - `RescueBench Base City Schema_ Conceptual Design Document.pdf`: schema/design reference.
 - `RescueBench JSON Data Dictionary.pdf`: field-level JSON dictionary/reference.

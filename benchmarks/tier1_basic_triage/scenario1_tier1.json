@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "scenario_name": "RescueBench Tier 1 - Basic Triage",
+    "scenario_name": "RescueBench Tier 1 - Basic Triage - Scenario 1",
     "description": "Level 1 benchmark scenario focusing on basic triage and simple Vehicle Routing Problem (VRP) mechanics. Dynamic triggers are disabled, and incidents require straightforward single-unit dispatches without complex capability sequencing.",
     "version": "1.0",
     "global_clock_min": 0
