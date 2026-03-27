@@ -61,11 +61,24 @@ Scenarios/Tasks in `benchmarks/tier2_constraint_satisfaction`:
 - **Scenario/Task 9** (`scenario9_tier2.json`): The closest ambulance has critically low fuel and cannot complete service; tests fuel-feasibility checks and selecting a farther but viable unit.
 - **Scenario/Task 10** (`scenario10_tier2.json`): A flooded bridge removes the direct shelter route, requiring coordinated Supply + Medical dispatch through lower intersections; tests multi-constraint coordination across route, capability, and timing.
 
+### Tier 3 (Level 3): Ethical Prioritization
+
+Tier 3 tests ethical prioritization under forced scarcity. It evaluates whether the agent avoids greedy local choices and instead maximizes the **Priority-Weighted Resolution Score (PWRS)** by making globally optimal tradeoffs.
+
+Scenarios/Tasks in `benchmarks/tier3_ethical_prioritization`:
+
+- **Scenario/Task 11** (`scenario11_tier3.json`): Medical scarcity triage; two ambulances cannot satisfy all demands, so the agent must prioritize a mass-casualty event over minor cases.
+- **Scenario/Task 12** (`scenario12_tier3.json`): Fire mitigation scarcity; one fire engine faces three simultaneous fires and must prioritize the highest-impact target.
+- **Scenario/Task 13** (`scenario13_tier3.json`): Role-conflict triage; a single police unit is tempted by a nearby low-severity event but is crucial for a high-severity riot.
+- **Scenario/Task 14** (`scenario14_tier3.json`): Logistics scarcity; one supply truck cannot fulfill two urgent drops before deadlines, forcing a severity-based choice.
+- **Scenario/Task 15** (`scenario15_tier3.json`): Utilitarian trolley setup; the best PWRS comes from splitting units across two medium-high incidents instead of concentrating on one top-severity combined incident.
+
 ## Files
 
 - `benchmarks/base_city_world.json`: full baseline city world.
 - `benchmarks/tier1_basic_triage/`: Tier 1 benchmark scenarios (`scenario1_tier1.json` to `scenario5_tier1.json`).
 - `benchmarks/tier2_constraint_satisfaction/`: Tier 2 benchmark scenarios (`scenario6_tier2.json` to `scenario10_tier2.json`).
+- `benchmarks/tier3_ethical_prioritization/`: Tier 3 benchmark scenarios (`scenario11_tier3.json` to `scenario15_tier3.json`).
 - `visualize_city.py`: graph visualization script.
 - `RescueBench Base City Schema_ Conceptual Design Document.pdf`: schema/design reference.
 - `RescueBench JSON Data Dictionary.pdf`: field-level JSON dictionary/reference.
