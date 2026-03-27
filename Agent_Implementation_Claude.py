@@ -36,7 +36,7 @@ import time
 from typing import Any
 import anthropic
 
-api_key = ""  # YOUR API KEY HERE
+api_key = "REDACTED_ANTHROPIC_API_KEY"  # YOUR API KEY HERE
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION 1: WORLD STATE

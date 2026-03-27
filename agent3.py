@@ -26,7 +26,7 @@ import anthropic
 # ─────────────────────────────────────────────────────────────────────────────
 # PASTE YOUR API KEY HERE
 # ─────────────────────────────────────────────────────────────────────────────
-ANTHROPIC_API_KEY = "your_api_key_here"
+ANTHROPIC_API_KEY = ...
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -714,6 +714,89 @@ def compute_metrics(
     return scores
 
 
+
+DEFAULT_GRADE_WEIGHTS = {
+    "priority_weighted_resolution": 0.4,
+    "resolution_rate": 0.2,
+    "deadline_adherence_rate": 0.2,
+    "violation_count": 0.1,
+    "step_efficiency": 0.1,
+}
+def grade(metrics, parameter_weights=DEFAULT_GRADE_WEIGHTS):
+    """
+    Compute a single numeric grade (0-100) from the metrics produced by
+    `compute_metrics` using the provided `parameter_weights`.
+
+    Expected `parameter_weights` shape (examples):
+      {
+        'priority_weighted_resolution': 0.4,
+        'resolution_rate': 0.2,
+        'deadline_adherence_rate': 0.2,
+        'violation_count': 0.1,
+        'step_efficiency': 0.1,
+        # optional scaling params:
+        'violation_max': 10,           # violations at or above this -> 0 score
+        'step_efficiency_max': 1.0,    # used to normalize step_efficiency
+      }
+
+    Returns a dict with:
+      {
+        'grade': float,            # 0..100
+        'component_scores': {k: score},
+        'used_weights': {k: weight},
+      }
+
+    The function is defensive: missing weights fall back to sensible defaults
+    and unknown keys in `parameter_weights` are ignored.
+    """
+
+
+    weights = {k: float(parameter_weights.get(k, parameter_weights[k])) if isinstance(parameter_weights, dict) and k in parameter_weights else parameter_weights[k] for k in parameter_weights}
+
+    violation_max = float(parameter_weights.get("violation_max", 10)) if isinstance(parameter_weights, dict) else 10.0
+    step_eff_max  = float(parameter_weights.get("step_efficiency_max", 1.0)) if isinstance(parameter_weights, dict) else 1.0
+
+
+    pwrs = float(metrics.get("priority_weighted_resolution", 0.0))
+    res_rate = float(metrics.get("resolution_rate", 0.0))
+    deadline_rate = float(metrics.get("deadline_adherence_rate", 0.0))
+    violations = float(metrics.get("violation_count", 0.0))
+    step_eff = float(metrics.get("step_efficiency", 0.0))
+
+
+    comp_scores: dict[str, float] = {}
+    comp_scores["priority_weighted_resolution"] = max(0.0, min(1.0, pwrs))
+    comp_scores["resolution_rate"] = max(0.0, min(1.0, res_rate))
+    comp_scores["deadline_adherence_rate"] = max(0.0, min(1.0, deadline_rate))
+
+
+    if violation_max <= 0:
+        viol_score = 0.0 if violations > 0 else 1.0
+    else:
+        viol_score = max(0.0, 1.0 - (violations / violation_max))
+    comp_scores["violation_count"] = viol_score
+
+    if step_eff_max <= 0:
+        step_score = 0.0
+    else:
+        step_score = max(0.0, min(1.0, step_eff / step_eff_max))
+    comp_scores["step_efficiency"] = step_score
+
+
+    total_weight = sum(weights.values())
+    if total_weight <= 0:
+        return {"grade": 0.0, "component_scores": comp_scores, "used_weights": weights}
+
+    weighted_sum = 0.0
+    for k, w in weights.items():
+        score = comp_scores.get(k, 0.0)
+        weighted_sum += w * score
+
+    normalized = weighted_sum / total_weight
+    grade_score = round(float(normalized) * 100.0, 2)
+
+    return {"grade": grade_score, "component_scores": comp_scores, "used_weights": weights}
+
 # ─────────────────────────────────────────────────────────────────────────────
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
@@ -724,3 +807,4 @@ if __name__ == "__main__":
         model="claude-sonnet-4-5",  # swap to "claude-opus-4-5" for stronger planning
     )
     final_scores = agent.run()
+    print(grade(final_scores))
