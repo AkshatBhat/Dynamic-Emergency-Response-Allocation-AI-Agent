@@ -64,16 +64,8 @@ Scenarios/Tasks in `benchmarks/tier2_constraint_satisfaction`:
 ## Files
 
 - `benchmarks/base_city_world.json`: full baseline city world.
-- `benchmarks/tier1_basic_triage/scenario1_tier1.json`: Tier 1 basic triage Scenario 1.
-- `benchmarks/tier1_basic_triage/scenario2_tier1.json`: Tier 1 basic triage Scenario 2.
-- `benchmarks/tier1_basic_triage/scenario3_tier1.json`: Tier 1 basic triage Scenario 3.
-- `benchmarks/tier1_basic_triage/scenario4_tier1.json`: Tier 1 basic triage Scenario 4.
-- `benchmarks/tier1_basic_triage/scenario5_tier1.json`: Tier 1 basic triage Scenario 5.
-- `benchmarks/tier2_constraint_satisfaction/scenario6_tier2.json`: Tier 2 constraint satisfaction Scenario 6.
-- `benchmarks/tier2_constraint_satisfaction/scenario7_tier2.json`: Tier 2 constraint satisfaction Scenario 7.
-- `benchmarks/tier2_constraint_satisfaction/scenario8_tier2.json`: Tier 2 constraint satisfaction Scenario 8.
-- `benchmarks/tier2_constraint_satisfaction/scenario9_tier2.json`: Tier 2 constraint satisfaction Scenario 9.
-- `benchmarks/tier2_constraint_satisfaction/scenario10_tier2.json`: Tier 2 constraint satisfaction Scenario 10.
+- `benchmarks/tier1_basic_triage/`: Tier 1 benchmark scenarios (`scenario1_tier1.json` to `scenario5_tier1.json`).
+- `benchmarks/tier2_constraint_satisfaction/`: Tier 2 benchmark scenarios (`scenario6_tier2.json` to `scenario10_tier2.json`).
 - `visualize_city.py`: graph visualization script.
 - `RescueBench Base City Schema_ Conceptual Design Document.pdf`: schema/design reference.
 - `RescueBench JSON Data Dictionary.pdf`: field-level JSON dictionary/reference.
