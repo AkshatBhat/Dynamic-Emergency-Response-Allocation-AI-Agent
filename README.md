@@ -73,12 +73,25 @@ Scenarios/Tasks in `benchmark/tier3_ethical_prioritization`:
 - **Scenario/Task 14** (`scenario14_tier3.json`): Logistics scarcity; one supply truck cannot fulfill two urgent drops before deadlines, forcing a severity-based choice.
 - **Scenario/Task 15** (`scenario15_tier3.json`): Utilitarian trolley setup; the best PWRS comes from splitting units across two medium-high incidents instead of concentrating on one top-severity combined incident.
 
+### Tier 4 (Level 4): Dynamic Replanning
+
+Tier 4 is the final stress test of the ReAct architecture. The agent may generate a mathematically strong initial plan, but hidden `dynamic_triggers` fire mid-simulation and alter the graph in real time, forcing the agent to discard stale plans, re-read world state, and re-route dynamically.
+
+Scenarios/Tasks in `benchmark/tier4_dynamic_replanning`:
+
+- **Scenario/Task 16** (`scenario16_tier4.json`): Mid-mission bridge collapse reroutes critical units and tests rapid path recomputation.
+- **Scenario/Task 17** (`scenario17_tier4.json`): Hospital access flooding invalidates the original medical route and tests adaptive medical dispatch.
+- **Scenario/Task 18** (`scenario18_tier4.json`): Escalating fire spread changes regional risk priorities and tests rolling reprioritization.
+- **Scenario/Task 19** (`scenario19_tier4.json`): Multi-trigger road disruptions create cascading infeasibility and test repeated re-planning under uncertainty.
+- **Scenario/Task 20** (`scenario20_tier4.json`): Compound dynamic shocks across multiple sectors test full-loop recovery, tool re-querying, and end-to-end replanning robustness.
+
 ## Files
 
 - `benchmark/base_city_world.json`: full baseline city world.
 - `benchmark/tier1_basic_triage/`: Tier 1 benchmark scenarios (`scenario1_tier1.json` to `scenario5_tier1.json`).
 - `benchmark/tier2_constraint_satisfaction/`: Tier 2 benchmark scenarios (`scenario6_tier2.json` to `scenario10_tier2.json`).
 - `benchmark/tier3_ethical_prioritization/`: Tier 3 benchmark scenarios (`scenario11_tier3.json` to `scenario15_tier3.json`).
+- `benchmark/tier4_dynamic_replanning/`: Tier 4 benchmark scenarios (`scenario16_tier4.json` to `scenario20_tier4.json`).
 - `visualize_city.py`: graph visualization script.
 - `RescueBench Base City Schema_ Conceptual Design Document.pdf`: schema/design reference.
 - `RescueBench JSON Data Dictionary.pdf`: field-level JSON dictionary/reference.
