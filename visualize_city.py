@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-DEFAULT_SCENARIO_PATH = "benchmarks/base_city_world.json"
+DEFAULT_SCENARIO_PATH = "benchmark/base_city_world.json"
 
 
 def load_world(filepath):

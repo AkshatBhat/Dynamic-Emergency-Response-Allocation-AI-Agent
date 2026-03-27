@@ -17,20 +17,20 @@
 
 ## Run the Visualizer
 
-Default run (uses `benchmarks/base_city_world.json`):
+Default run (uses `benchmark/base_city_world.json`):
 ```bash
 python3 visualize_city.py
 ```
 
 Run with a specific JSON file using a command line argument:
 ```bash
-python3 visualize_city.py benchmarks/tier1_basic_triage/scenario1_tier1.json
+python3 visualize_city.py benchmark/tier1_basic_triage/scenario1_tier1.json
 ```
 
 More examples:
 ```bash
-python3 visualize_city.py benchmarks/tier1_basic_triage/scenario3_tier1.json
-python3 visualize_city.py benchmarks/tier1_basic_triage/scenario5_tier1.json
+python3 visualize_city.py benchmark/tier1_basic_triage/scenario3_tier1.json
+python3 visualize_city.py benchmark/tier1_basic_triage/scenario5_tier1.json
 ```
 
 ## Benchmark Tasks/Scenarios
@@ -41,7 +41,7 @@ In this README, **Level** and **Tier** are used synonymously, and **Task** and *
 
 Tier 1 focuses on **direct resource-to-incident matching** with simple dispatch logic and limited coordination complexity.
 
-Scenarios/Tasks in `benchmarks/tier1_basic_triage`:
+Scenarios/Tasks in `benchmark/tier1_basic_triage`:
 
 - **Scenario/Task 1** (`scenario1_tier1.json`): A baseline mixed-incident triage task with straightforward single-unit dispatch; tests direct resource matching and routing fundamentals.
 - **Scenario/Task 2** (`scenario2_tier1.json`): Focuses on crowd control and bulk logistics (Police and Supply Trucks); tests prioritization and assignment under moderate urgency.
@@ -53,7 +53,7 @@ Scenarios/Tasks in `benchmarks/tier1_basic_triage`:
 
 Tier 2 focuses on **hard physical and mathematical feasibility constraints**. There are no mid-mission dynamic surprises here; the agent is tested on reading the initial JSON state correctly and avoiding impossible dispatch plans.
 
-Scenarios/Tasks in `benchmarks/tier2_constraint_satisfaction`:
+Scenarios/Tasks in `benchmark/tier2_constraint_satisfaction`:
 
 - **Scenario/Task 6** (`scenario6_tier2.json`): A fire emergency occurs across a suspension bridge that cannot support heavy Fire Engines, forcing a complex detour for the engine while Police can take the direct route; tests edge vehicle-type/weight restrictions.
 - **Scenario/Task 7** (`scenario7_tier2.json`): A bus rollover requires medical transport capacity of 4 while each ambulance holds 2; tests capacity math and multi-vehicle dispatch to one incident.
@@ -65,7 +65,7 @@ Scenarios/Tasks in `benchmarks/tier2_constraint_satisfaction`:
 
 Tier 3 tests ethical prioritization under forced scarcity. It evaluates whether the agent avoids greedy local choices and instead maximizes the **Priority-Weighted Resolution Score (PWRS)** by making globally optimal tradeoffs.
 
-Scenarios/Tasks in `benchmarks/tier3_ethical_prioritization`:
+Scenarios/Tasks in `benchmark/tier3_ethical_prioritization`:
 
 - **Scenario/Task 11** (`scenario11_tier3.json`): Medical scarcity triage; two ambulances cannot satisfy all demands, so the agent must prioritize a mass-casualty event over minor cases.
 - **Scenario/Task 12** (`scenario12_tier3.json`): Fire mitigation scarcity; one fire engine faces three simultaneous fires and must prioritize the highest-impact target.
@@ -75,10 +75,10 @@ Scenarios/Tasks in `benchmarks/tier3_ethical_prioritization`:
 
 ## Files
 
-- `benchmarks/base_city_world.json`: full baseline city world.
-- `benchmarks/tier1_basic_triage/`: Tier 1 benchmark scenarios (`scenario1_tier1.json` to `scenario5_tier1.json`).
-- `benchmarks/tier2_constraint_satisfaction/`: Tier 2 benchmark scenarios (`scenario6_tier2.json` to `scenario10_tier2.json`).
-- `benchmarks/tier3_ethical_prioritization/`: Tier 3 benchmark scenarios (`scenario11_tier3.json` to `scenario15_tier3.json`).
+- `benchmark/base_city_world.json`: full baseline city world.
+- `benchmark/tier1_basic_triage/`: Tier 1 benchmark scenarios (`scenario1_tier1.json` to `scenario5_tier1.json`).
+- `benchmark/tier2_constraint_satisfaction/`: Tier 2 benchmark scenarios (`scenario6_tier2.json` to `scenario10_tier2.json`).
+- `benchmark/tier3_ethical_prioritization/`: Tier 3 benchmark scenarios (`scenario11_tier3.json` to `scenario15_tier3.json`).
 - `visualize_city.py`: graph visualization script.
 - `RescueBench Base City Schema_ Conceptual Design Document.pdf`: schema/design reference.
 - `RescueBench JSON Data Dictionary.pdf`: field-level JSON dictionary/reference.
