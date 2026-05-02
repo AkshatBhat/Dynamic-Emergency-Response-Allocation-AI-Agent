@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "scenario_name": "RescueBench Tier 1 - Basic Triage",
-    "description": "Level 1 benchmark scenario focusing on basic triage and simple Vehicle Routing Problem (VRP) mechanics. Dynamic triggers are disabled, and incidents require straightforward single-unit dispatches without complex capability sequencing.",
+    "scenario_name": "RescueBench Tier 4 - Dynamic Replanning - Scenario 16",
+    "description": "Level 4 scenario testing immediate en-route diversion. An ambulance is dispatched via the optimal suspension bridge route. Mid-mission, a structural collapse destroys the bridge, forcing a massive geographical detour.",
     "version": "1.0",
     "global_clock_min": 0
   },
@@ -56,7 +56,7 @@
     { "id": "edge_int02_to_hospital", "source_node": "node_int_02", "target_node": "node_hospital_gen", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
     { "id": "edge_int01_to_int03", "source_node": "node_int_01", "target_node": "node_int_03", "base_travel_time": 6, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
     { "id": "edge_int03_to_int04", "source_node": "node_int_03", "target_node": "node_int_04", "base_travel_time": 10, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
-    { "id": "edge_suspension_bridge_int02_to_int05", "source_node": "node_int_02", "target_node": "node_int_05", "base_travel_time": 8, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_suspension_bridge_int02_to_int05", "source_node": "node_int_02", "target_node": "node_int_05", "base_travel_time": 8, "status": "clear", "allowed_vehicle_types": ["ambulance", "police_car"] },
     { "id": "edge_int04_to_gas", "source_node": "node_int_04", "target_node": "node_gas_station_north", "base_travel_time": 2, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
     { "id": "edge_int05_to_shelter", "source_node": "node_int_05", "target_node": "node_shelter_east", "base_travel_time": 7, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
     { "id": "edge_int02_to_int06", "source_node": "node_int_02", "target_node": "node_int_06", "base_travel_time": 5, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
@@ -72,30 +72,26 @@
     { "id": "edge_int03_to_int07", "source_node": "node_int_03", "target_node": "node_int_07", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] }
   ],
   "active_fleet": [
-    { "unit_id": "MED_01", "vehicle_type": "ambulance", "home_depot": "node_hospital_gen", "current_location": "node_hospital_gen", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 },
-    { "unit_id": "MED_02", "vehicle_type": "ambulance", "home_depot": "node_hospital_gen", "current_location": "node_hospital_gen", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 },
-    { "unit_id": "FIRE_01", "vehicle_type": "fire_engine", "home_depot": "node_depot_main", "current_location": "node_depot_main", "status": "idle", "current_fuel": 80, "current_capacity_used": 0 },
-    { "unit_id": "POLICE_01", "vehicle_type": "police_car", "home_depot": "node_depot_main", "current_location": "node_depot_main", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 }
+    { "unit_id": "MED_01", "vehicle_type": "ambulance", "home_depot": "node_hospital_gen", "current_location": "node_hospital_gen", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 }
   ],
   "incidents": [
     {
       "incident_id": "INC_MED_001",
-      "type": "minor_medical_emergency",
-      "location_node": "node_int_08",
-      "severity_weight": 4,
-      "deadline_min": 25,
-      "required_capabilities": ["medical_triage"],
-      "required_capacity": 1
-    },
-    {
-      "incident_id": "INC_FIRE_002",
-      "type": "small_structural_fire",
-      "location_node": "node_int_03",
-      "severity_weight": 6,
+      "type": "severe_cardiac_arrest",
+      "location_node": "node_shelter_east",
+      "severity_weight": 9,
       "deadline_min": 35,
-      "required_capabilities": ["fire_suppression"],
-      "required_capacity": 0
+      "required_capabilities": ["medical_triage", "patient_transport"],
+      "required_capacity": 1
     }
   ],
-  "dynamic_triggers": []
+  "dynamic_triggers": [
+    {
+      "trigger_time": 8,
+      "event_type": "infrastructure_collapse",
+      "target_edge": "edge_suspension_bridge_int02_to_int05",
+      "new_status": "blocked_by_debris",
+      "message_to_agent": "URGENT UPDATE: A structural failure has caused the suspension bridge (edge_suspension_bridge_int02_to_int05) to collapse. The route is entirely impassable. All units must immediately calculate detours."
+    }
+  ]
 }

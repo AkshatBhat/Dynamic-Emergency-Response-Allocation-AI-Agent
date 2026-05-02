@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "scenario_name": "RescueBench Tier 1 - Basic Triage - Scenario 3",
+    "description": "Level 1 benchmark scenario focusing on multi-node medical triage. Tests the agent's ability to efficiently dispatch multiple ambulances from different hospitals to scattered, low-severity emergencies.",
+    "version": "1.0",
+    "global_clock_min": 0
+  },
+  "vehicle_classes": {
+    "ambulance": {
+      "role": "high-speed medical",
+      "speed_multiplier": 1.5,
+      "max_capacity": 2,
+      "capabilities": ["medical_triage", "patient_transport"]
+    },
+    "fire_engine": {
+      "role": "heavy mitigation",
+      "speed_multiplier": 0.8,
+      "max_capacity": 0,
+      "capabilities": ["fire_suppression", "structural_rescue"]
+    },
+    "police_car": {
+      "role": "perimeter control",
+      "speed_multiplier": 1.2,
+      "max_capacity": 1,
+      "capabilities": ["traffic_control", "route_clearance"]
+    },
+    "supply_truck": {
+      "role": "bulk logistics",
+      "speed_multiplier": 0.5,
+      "max_capacity": 50,
+      "capabilities": ["logistics_drop", "bulk_supply"]
+    }
+  },
+  "nodes": [
+    { "id": "node_depot_main", "type": "depot", "current_capacity": 100 },
+    { "id": "node_hospital_gen", "type": "hospital", "current_capacity": 15 },
+    { "id": "node_hospital_south", "type": "hospital", "current_capacity": 8 },
+    { "id": "node_gas_station_north", "type": "gas_station", "current_capacity": 999 },
+    { "id": "node_gas_station_west", "type": "gas_station", "current_capacity": 999 },
+    { "id": "node_shelter_east", "type": "depot", "current_capacity": 200 },
+    { "id": "node_int_01", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_02", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_03", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_04", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_05", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_06", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_07", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_08", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_09", "type": "standard_intersection", "current_capacity": 0 },
+    { "id": "node_int_10", "type": "standard_intersection", "current_capacity": 0 }
+  ],
+  "edges": [
+    { "id": "edge_depot_to_int01", "source_node": "node_depot_main", "target_node": "node_int_01", "base_travel_time": 5, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_depot_to_int09", "source_node": "node_depot_main", "target_node": "node_int_09", "base_travel_time": 8, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int01_to_int02", "source_node": "node_int_01", "target_node": "node_int_02", "base_travel_time": 3, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int02_to_hospital", "source_node": "node_int_02", "target_node": "node_hospital_gen", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int01_to_int03", "source_node": "node_int_01", "target_node": "node_int_03", "base_travel_time": 6, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int03_to_int04", "source_node": "node_int_03", "target_node": "node_int_04", "base_travel_time": 10, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_suspension_bridge_int02_to_int05", "source_node": "node_int_02", "target_node": "node_int_05", "base_travel_time": 8, "status": "clear", "allowed_vehicle_types": ["ambulance", "police_car"] },
+    { "id": "edge_int04_to_gas", "source_node": "node_int_04", "target_node": "node_gas_station_north", "base_travel_time": 2, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int05_to_shelter", "source_node": "node_int_05", "target_node": "node_shelter_east", "base_travel_time": 7, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int02_to_int06", "source_node": "node_int_02", "target_node": "node_int_06", "base_travel_time": 5, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int06_to_hospital_south", "source_node": "node_int_06", "target_node": "node_hospital_south", "base_travel_time": 3, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int04_to_int07", "source_node": "node_int_04", "target_node": "node_int_07", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int07_to_gas_west", "source_node": "node_int_07", "target_node": "node_gas_station_west", "base_travel_time": 2, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int05_to_int08", "source_node": "node_int_05", "target_node": "node_int_08", "base_travel_time": 6, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int08_to_shelter", "source_node": "node_int_08", "target_node": "node_shelter_east", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int06_to_int09", "source_node": "node_int_06", "target_node": "node_int_09", "base_travel_time": 7, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int09_to_int10", "source_node": "node_int_09", "target_node": "node_int_10", "base_travel_time": 3, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int10_to_int04", "source_node": "node_int_10", "target_node": "node_int_04", "base_travel_time": 5, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int07_to_int08", "source_node": "node_int_07", "target_node": "node_int_08", "base_travel_time": 9, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] },
+    { "id": "edge_int03_to_int07", "source_node": "node_int_03", "target_node": "node_int_07", "base_travel_time": 4, "status": "clear", "allowed_vehicle_types": ["ambulance", "fire_engine", "police_car", "supply_truck"] }
+  ],
+  "active_fleet": [
+    { "unit_id": "MED_01", "vehicle_type": "ambulance", "home_depot": "node_hospital_gen", "current_location": "node_hospital_gen", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 },
+    { "unit_id": "MED_02", "vehicle_type": "ambulance", "home_depot": "node_hospital_gen", "current_location": "node_hospital_gen", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 },
+    { "unit_id": "MED_03", "vehicle_type": "ambulance", "home_depot": "node_hospital_south", "current_location": "node_hospital_south", "status": "idle", "current_fuel": 100, "current_capacity_used": 0 }
+  ],
+  "incidents": [
+    {
+      "incident_id": "INC_MED_001",
+      "type": "slip_and_fall",
+      "location_node": "node_int_01",
+      "severity_weight": 5,
+      "deadline_min": 15,
+      "required_capabilities": ["medical_triage"],
+      "required_capacity": 1
+    },
+    {
+      "incident_id": "INC_MED_002",
+      "type": "allergic_reaction",
+      "location_node": "node_int_10",
+      "severity_weight": 6,
+      "deadline_min": 20,
+      "required_capabilities": ["medical_triage"],
+      "required_capacity": 1
+    },
+    {
+      "incident_id": "INC_MED_003",
+      "type": "minor_car_accident",
+      "location_node": "node_gas_station_north",
+      "severity_weight": 4,
+      "deadline_min": 25,
+      "required_capabilities": ["medical_triage"],
+      "required_capacity": 1
+    }
+  ],
+  "dynamic_triggers": []
+}
