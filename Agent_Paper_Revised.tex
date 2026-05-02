@@ -1,397 +1,210 @@
-\documentclass[10pt]{article}
-
-% ─── Packages ────────────────────────────────────────────────────────────────
-\usepackage[margin=1in]{geometry}
-\usepackage{times}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{array}
-\usepackage{multirow}
+\documentclass{article}
+\usepackage{iclr2026_conference,times}
 \usepackage{hyperref}
-\usepackage{xcolor}
-\usepackage{listings}
-\usepackage{verbatim}
-\usepackage{microtype}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{parskip}
-\usepackage{enumitem}
-\usepackage{natbib}
 \usepackage{url}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,multirow,array}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage{enumitem}
 
-% ─── ICLR-style configuration ────────────────────────────────────────────────
-\hypersetup{
-  colorlinks=true,
-  linkcolor=blue,
-  citecolor=blue,
-  urlcolor=blue,
-}
+\setlength{\parskip}{1pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{1pt}
+\setlength{\belowdisplayshortskip}{1pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{1pt}
+\setlist[itemize]{topsep=1pt,itemsep=0pt,parsep=0pt,leftmargin=*}
+\setlist[enumerate]{topsep=1pt,itemsep=0pt,parsep=0pt,leftmargin=*}
+\makeatletter
+\def\section{\@startsection{section}{1}{\z@}{-1.6ex plus -0.4ex minus -.2ex}{1.2ex plus 0.2ex minus 0.1ex}{\large\sc\raggedright}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-1.4ex plus -0.4ex minus -.2ex}{0.6ex plus .1ex}{\normalsize\sc\raggedright}}
+\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.2ex plus 0.4ex minus .2ex}{-1em}{\normalsize\bf}}
+\makeatother
 
-\lstset{
-  basicstyle=\small\ttfamily,
-  breaklines=true,
-  frame=single,
-  backgroundcolor=\color{gray!8},
-  keywordstyle=\color{blue},
-  commentstyle=\color{gray},
-  stringstyle=\color{red!70!black},
-  numbers=none,
-  xleftmargin=6pt,
-  xrightmargin=6pt,
-}
+\iclrfinalcopy
 
-\captionsetup{font=small, labelfont=bf}
-
-% ─── Title ────────────────────────────────────────────────────────────────────
-\title{%
-  \textbf{RescueBench Agent: A ReAct-Based Emergency Response \\
-  Allocation Agent with Deterministic Safety Validation}
-}
+\title{RescueBench Agent: A ReAct-Based Emergency Response
+Allocation Agent with Deterministic Safety Validation}
 
 \author{
   Akhil Gogineni \quad Nicolas Yepes \quad Akshat Bhat \quad Trusha Talati \\
   Department of Computer Science, University of Illinois Urbana-Champaign \\
-  Champaign, IL 61820, USA \\
   \texttt{\{vg23, nyepes2, akshatb5, ttalati2\}@illinois.edu}
 }
 
-\date{May 2026}
-
-% ─────────────────────────────────────────────────────────────────────────────
 \begin{document}
 \maketitle
 
-% ─────────────────────────────────────────────────────────────────────────────
 \begin{abstract}
 We present a comprehensive evaluation of five emergency response allocation
 agents across the 20-scenario RescueBench benchmark, spanning four difficulty
-tiers: basic triage (Tier~1), constraint satisfaction (Tier~2), ethical
-prioritization under resource scarcity (Tier~3), and dynamic replanning under
-infrastructure collapse (Tier~4). We introduce \textbf{AgentKit}, a
-code-first architecture in which all routing, capacity, and capability
-matching is handled by deterministic code, with an LLM
-(\texttt{gemini-2.5-flash}) consulted \emph{only} for ethical tie-breaking
-when two incidents share identical severity and deadline in Tier~3. We compare
-AgentKit against four baselines: a deterministic greedy planner, a zero-shot
-LLM baseline, a full ReAct loop without a validator (Ablated), and a full
-ReAct loop with a deterministic \emph{ValidatorTool}. We additionally
-introduce \emph{Cap-PWRS}, a capability-coverage variant of the
-Priority-Weighted Resolution Score that awards partial credit for multi-vehicle
-progress on multi-capability incidents. AgentKit achieves zero constraint
-violations across all tiers and matches the deterministic planner identically
-on all four tiers, confirming that code-first design produces
-deterministic-grade reliability. A surprising finding is that full ReAct with
-the ValidatorTool \emph{underperforms} Ablated ReAct on PWRS in three of four
-tiers: repeated validator rejections increase step overhead without improving
-resolution quality. Step efficiency analysis shows AgentKit achieves a
-$4\times$--$9\times$ step advantage over full ReAct with zero wasted
-observation or route-verification steps.
+tiers. We introduce \textbf{AgentKit}, a code-first architecture in which all
+routing, capacity, and capability matching is handled deterministically, with
+an LLM (\texttt{gemini-2.5-flash}) consulted \emph{only} for ethical
+tie-breaking when two incidents share identical severity and deadline. We
+also introduce \emph{Cap-PWRS}, a capability-coverage variant of the
+Priority-Weighted Resolution Score that awards partial credit for
+multi-vehicle progress. AgentKit achieves zero constraint violations across
+all tiers and matches the deterministic planner on all four tiers. A key
+finding is that full ReAct with a ValidatorTool \emph{underperforms} Ablated
+ReAct on PWRS in three of four tiers: repeated validator rejections increase
+step overhead without improving resolution quality. Step efficiency analysis
+shows AgentKit achieves a $4\times$ to $9\times$ step advantage over full
+ReAct with zero wasted observation or route-verification steps.
 \end{abstract}
 
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Introduction}
 \label{sec:intro}
 
-Autonomous emergency resource allocation presents a demanding testbed for
-AI agents: it requires real-time perception of a partially observable
-environment, constraint-aware planning, multi-step reasoning, and graceful
-recovery from unexpected events. Classical approaches rely on hand-crafted
-heuristics or combinatorial optimizers that are brittle to scenario variation.
-Large language models (LLMs), endowed with in-context reasoning, offer the
-promise of flexible adaptation—but without a grounding mechanism they are
-prone to hallucinating invalid actions (dispatching unavailable vehicles,
-ignoring road restrictions, assigning patients to full hospitals).
+Autonomous emergency resource allocation requires constraint-aware planning,
+multi-step reasoning, and recovery from unexpected events. Classical heuristics
+are brittle to scenario variation, while LLMs without grounding hallucinate
+invalid actions such as dispatching unavailable vehicles, ignoring road
+restrictions, or assigning patients to full hospitals. The ReAct
+framework~\citep{yao2023react} interleaves reasoning traces with tool calls,
+grounding the model in world state before it commits to an action.
 
-The ReAct framework~\citep{yao2023react} interleaves \textit{reasoning}
-traces with \textit{acting} via tool calls, grounding the model in actual
-world state before it commits to an action. We study ReAct and three
-alternative architectures under four increasingly difficult conditions
-defined by the RescueBench benchmark~\citep{group2bench2026}.
+A central insight motivating this work is that \emph{not all decisions require
+an LLM}. Routing, capacity checking, and capability matching are deterministic
+operations where code dominates; LLM judgment is valuable only for ethical
+tie-breaking when incidents are objectively equivalent on all measurable
+dimensions, as in Tier~3. This motivates our main contribution, the
+\textbf{AgentKit} architecture.
 
-A central insight motivating this work is that \emph{not all decisions
-require an LLM}. Routing, capacity checking, and capability matching are
-deterministic mathematical operations where code outperforms LLM reasoning in
-both speed and reliability. LLM judgment is genuinely valuable only when two
-or more courses of action are objectively equal on all measurable dimensions
-and a human-judgment call is needed to break the tie---the ethical
-prioritization scenario of Tier~3. This observation motivates our main
-contribution: the \textbf{AgentKit} architecture.
+This paper makes four contributions: (1) a \textbf{five-method evaluation} of
+RescueBench across all 20 scenarios and 4 tiers; (2) \textbf{AgentKit}, a
+code-first agent reserving LLM calls for ethical tie-breaking with zero
+constraint violations; (3) \textbf{Cap-PWRS}, which provides partial credit
+for multi-vehicle capability coverage; and (4) a \textbf{step efficiency
+analysis} quantifying LLM grounding overhead versus code-based planning.
 
-This paper makes four contributions:
-\begin{enumerate}[leftmargin=*]
-  \item A \textbf{comprehensive five-method evaluation} of the RescueBench
-    benchmark across all 20 scenarios and 4 tiers.
-  \item The \textbf{AgentKit architecture}: a code-first agent that reserves
-    LLM calls exclusively for ethical tie-breaking, achieving zero constraint
-    violations with deterministic-grade reliability.
-  \item The \textbf{Cap-PWRS metric}, which gives partial credit for partial
-    capability coverage on multi-capability incidents, providing a finer
-    signal than binary PWRS in Tier~2--4 scenarios.
-  \item A \textbf{step efficiency analysis} showing where agent steps are
-    spent and the cost of LLM grounding overhead versus code-based planning.
-\end{enumerate}
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Related Work}
 \label{sec:related}
 
 \paragraph{ReAct and tool-augmented LLMs.}
-\citet{yao2023react} demonstrated that synergizing reasoning traces with
-action execution substantially improves performance on decision-making
-benchmarks. Subsequent work has applied tool-augmented LLMs to web
-navigation~\citep{shinn2023reflexion}, code execution~\citep{chen2022code},
-and scientific reasoning~\citep{schick2023toolformer}. Our work extends this
-line to physical resource allocation under hard constraints.
+\citet{yao2023react} demonstrated that synergizing reasoning traces with action
+execution improves decision-making benchmarks. Subsequent work applies
+tool-augmented LLMs to web navigation~\citep{shinn2023reflexion}, code
+execution~\citep{chen2022code}, and tool learning~\citep{schick2023toolformer}.
+We extend this line to physical resource allocation under hard constraints.
 
 \paragraph{Emergency response planning.}
-Traditional vehicle routing for emergency response uses integer programming
-and greedy heuristics~\citep{zhang2017ems}. Multi-objective formulations
-balance response time, capacity, and fairness~\citep{liu2019multi}. LLM-based
-planners have not been systematically evaluated in this setting prior to this
-work.
+Traditional methods use integer programming and greedy
+heuristics~\citep{zhang2017ems}; multi-objective formulations balance response
+time, capacity, and fairness~\citep{liu2019multi}. LLM-based planners have
+not been systematically evaluated in this setting prior to this work.
 
-\paragraph{LLM benchmarks with constraint violation.}
+\paragraph{LLM benchmarks and multi-vehicle dispatch.}
 BabyAI~\citep{chevalier2019babyai} and ALFWorld~\citep{shridhar2021alfworld}
 test sequential decision-making but lack quantitative constraint-violation
-metrics. RescueBench explicitly tracks violations through the ValidatorTool,
-enabling ablation of its contribution.
+metrics. Cooperative dispatch where no single agent satisfies all task
+requirements appears in team formation~\citep{stone2000} and collaborative
+robotics~\citep{khamis2015}; Tier~2 of RescueBench instantiates this problem
+for LLM agents for the first time.
 
-\paragraph{Multi-vehicle dispatch.}
-Cooperative multi-agent dispatch, where no single agent can satisfy all
-requirements of a task, is studied in team formation~\citep{stone2000} and
-collaborative robotics~\citep{khamis2015}. Tier~2 of RescueBench instantiates
-this problem for LLM agents for the first time.
-
-\paragraph{Code-first agent architectures.}
-Recent work on agent frameworks~\citep{yao2023react} has explored hybrid
-approaches where code handles structured reasoning. Our AgentKit design
-formalizes the principle that LLMs should be reserved for genuinely
-ambiguous decisions, with all mathematical operations delegated to code.
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Agent Design}
 \label{sec:agent}
 
 \subsection{Shared Infrastructure}
-\label{sec:arch}
 
-All five agents in our evaluation share the same simulation infrastructure:
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{WorldState} maintains the live simulation: city graph,
-    vehicle positions, incident status, and dynamic trigger schedule.
-  \item \textbf{WorldTool} exposes six API functions: \texttt{get\_map\_state},
-    \texttt{get\_vehicles}, \texttt{get\_incidents},
-    \texttt{get\_shortest\_path}, \texttt{dispatch\_vehicle},
-    \texttt{report\_status}.
-  \item \textbf{ValidatorTool} deterministically verifies every proposed
-    \texttt{dispatch\_vehicle} call before execution, enforcing:
-    vehicle availability, capability contribution, capacity, route
-    reachability (vehicle-type-aware Dijkstra), and hospital capacity.
-\end{itemize}
-
-\subsection{Technical Approach}
-\label{sec:tech}
-
-\paragraph{Vehicle-type-aware routing.}
-The city graph includes edges with per-edge \texttt{allowed\_vehicle\_types}
-restrictions (e.g., the suspension bridge is passable only by ambulances and
-police cars). Dijkstra's algorithm is parameterized by vehicle type, pruning
-disallowed edges before the search.
-
-\paragraph{Multi-dispatch per incident.}
-Tier~2 scenarios feature incidents requiring disjoint capability sets
-(e.g., \texttt{fire\_suppression} AND \texttt{traffic\_control}) that no
-single vehicle possesses. The world state tracks
-\texttt{covered\_capabilities} per incident; an incident resolves when all
-required capabilities are covered, potentially by a sequence of vehicles.
-The ValidatorTool's dispatch check is relaxed: a vehicle must contribute
-\emph{at least one} capability that has not yet been covered.
-
-\paragraph{Dynamic trigger processing.}
-Tier~4 scenarios include timed infrastructure events (edge collapses, hospital
-floods) encoded as \texttt{dynamic\_triggers} with a \texttt{trigger\_time}.
-The simulation clock advances to a vehicle's arrival time on each dispatch;
-triggers within the transit window fire automatically.
-
-\paragraph{Cap-PWRS late-resolution penalty.}
-We introduce a linear SLA decay for late-resolved incidents:
-\begin{equation}
-  \text{time\_penalty}_i = \max\!\left(0,\; 1 - \frac{t_{\text{resolved}} - d_i}{d_i}\right)
-\end{equation}
-where $d_i$ is the deadline. Full credit is awarded at deadline; zero credit
-at $2d_i$. This replaces an arbitrary 50\% flat penalty used in earlier work.
+All five agents share the same simulation. \textbf{WorldState} maintains the
+live city graph, vehicle positions, incident status, and dynamic trigger
+schedule. \textbf{WorldTool} exposes six API functions for querying map state,
+vehicles, incidents, shortest paths, and dispatching or reporting status.
+\textbf{ValidatorTool} deterministically verifies every proposed dispatch,
+enforcing vehicle availability, capability contribution, capacity, and
+vehicle-type-aware Dijkstra routing. The city graph includes per-edge
+\texttt{allowed\_vehicle\_types} restrictions; Tier~2 scenarios track
+\texttt{covered\_capabilities} per incident, resolving when all required
+capabilities are covered by a sequence of vehicles; and Tier~4 encodes timed
+infrastructure events (\texttt{dynamic\_triggers}) whose clock advances on
+each dispatch.
 
 \subsection{AgentKit Architecture}
 \label{sec:agentkit}
 
-The \textbf{AgentKit} agent is architecturally distinct from the ReAct loop
-in one defining way: \emph{code handles all mathematics; the LLM is consulted
-only for ethical ambiguity}. Its design follows a strict observe--plan--act
---replan cycle:
-
-\begin{itemize}[leftmargin=*]
+AgentKit delegates all mathematics to code; the LLM is consulted only for
+ethical ambiguity. It follows a strict observe, plan, act, replan cycle:
+\begin{itemize}
   \item \textbf{observe()} polls world state and proactively advances the
-    simulation clock, firing any pending dynamic triggers. This ensures
-    infrastructure failures are detected on every cycle, not only when a
-    dispatch happens to arrive during a trigger window (critical for Tier~4).
-  \item \textbf{plan()} ranks open incidents by $(\text{severity}\!\downarrow,
-    \text{deadline}\!\uparrow)$ using pure Python. If and only if the top two
-    incidents share \emph{identical} severity and deadline (the ethical tie
-    condition of Tier~3), the LLM is queried with a minimal structured prompt
-    asking it to order the tied incidents on humanitarian grounds.
-  \item \textbf{act()} scans the plan queue in priority order; for each
-    incident it calls \texttt{\_match\_vehicle()} (nearest idle vehicle
-    contributing at least one uncovered capability, including hospital
-    resolution for patient transport), runs the ValidatorTool, and dispatches.
-    It falls through to the next incident if no vehicle is available for the
-    current top incident, ensuring no dispatches are missed.
-  \item \textbf{replan()} is triggered whenever \texttt{observe()} returns
-    non-empty alerts. It flushes the plan queue entirely and rebuilds it from
-    fresh world state, enabling correct response to Tier~4 infrastructure
-    events.
+    simulation clock every cycle, firing pending dynamic triggers to ensure
+    infrastructure failures are detected regardless of dispatch timing.
+  \item \textbf{plan()} ranks open incidents by
+    $(\text{severity}{\downarrow}, \text{deadline}{\uparrow})$ in pure Python.
+    Only when the top two incidents share \emph{identical} severity and
+    deadline does it query the LLM with a minimal structured prompt for
+    humanitarian ordering.
+  \item \textbf{act()} calls \texttt{\_match\_vehicle()} to find the nearest
+    idle vehicle contributing at least one uncovered capability, runs the
+    ValidatorTool, and dispatches. It falls through to the next incident if no
+    vehicle is available, ensuring no dispatches are missed.
+  \item \textbf{replan()} flushes the plan queue entirely and rebuilds it from
+    fresh world state whenever \texttt{observe()} returns infrastructure alerts,
+    enabling correct response to Tier~4 events.
 \end{itemize}
-
-The agent maintains a \emph{memory log} of failed dispatches (vehicle,
-incident, reason, timestamp) and an \emph{observation log}. Its LLM call
-budget is effectively zero on Tiers~1, 2, and~4---all decisions are made
-by code.
+The LLM call budget is effectively zero on Tiers~1, 2, and~4.
 
 \subsection{ReAct Architecture}
-\label{sec:react}
 
-The ReAct loop gives the LLM full tool access and a multi-turn conversation.
-At each step the model issues zero or more tool calls; results are injected
-as observations; the loop terminates when the model issues no further calls
-or a step budget of 40 is exhausted. Two variants are evaluated:
-\emph{Full} (ValidatorTool enabled: invalid dispatches return a structured
-error the LLM must correct) and \emph{Ablated} (ValidatorTool disabled:
-invalid dispatches execute and corrupt world state).
+The ReAct loop grants the LLM full tool access across a multi-turn
+conversation, terminating when no further calls are issued or a 40-step
+budget is exhausted. \emph{Full} enables ValidatorTool (invalid dispatches
+return a structured error for self-correction); \emph{Ablated} disables it
+(invalid dispatches execute and corrupt world state).
 
-\subsection{Implementation}
-\label{sec:impl}
-
-All agents are implemented in Python (\texttt{AgentImplementation.py}).
-LLM-dependent modes use the Google Gemini API (\texttt{gemini-2.5-flash})
-via the \texttt{google-generativeai} SDK. The benchmark runner supports all
-five evaluation modes and writes aggregated results to JSON. Environment
-variables are loaded from a \texttt{.env} file via \texttt{python-dotenv}.
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Experimental Setup}
 \label{sec:setup}
 
 \subsection{Benchmark}
-\label{sec:bench}
+RescueBench~\citep{group2bench2026} provides 20 JSON scenarios on a shared
+16-node city graph, in four tiers of 5 scenarios each: \textbf{Tier~1}
+(basic triage, single-capability incidents, no dynamic events);
+\textbf{Tier~2} (multi-capability incidents, restricted edges, fuel
+constraints); \textbf{Tier~3} (ethical prioritization under vehicle
+scarcity); and \textbf{Tier~4} (infrastructure collapse forcing mid-mission
+route recalculation and hospital diversion).
 
-RescueBench~\citep{group2bench2026} consists of 20 JSON scenarios organized
-into four difficulty tiers (5 scenarios each). All scenarios share the same
-16-node city graph but vary in fleet composition, incident parameters, edge
-restrictions, and dynamic events.
+\subsection{Baselines and Metrics}
+We compare five methods: \textbf{Deterministic} (greedy sort by
+severity/deadline, no LLM, efficiency upper bound); \textbf{Zero-Shot LLM}
+(single prompt, JSON dispatch list, no validation); \textbf{ReAct Ablated};
+\textbf{ReAct Full}; and \textbf{AgentKit}.
 
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Tier~1 (Basic Triage):} Single-capability incidents,
-    unconstrained roads, no dynamic events. Solvable by any competent planner.
-  \item \textbf{Tier~2 (Constraint Satisfaction):} Multi-capability incidents
-    (requiring both fire suppression \emph{and} traffic control), restricted
-    edges (suspension bridge), fuel constraints.
-  \item \textbf{Tier~3 (Ethical Prioritization):} Forced resource scarcity
-    requiring the agent to maximize total priority-weighted resolution under
-    vehicle shortages.
-  \item \textbf{Tier~4 (Dynamic Replanning):} Infrastructure collapse
-    mid-mission forces route recalculation and, in some scenarios, hospital
-    diversion.
-\end{itemize}
+\paragraph{PWRS.}
+$\text{PWRS} = \frac{\sum_{i} s_i \cdot \mathbf{1}[\text{resolved}_i \wedge t_i^* \leq d_i]}
+                      {\sum_{i} s_i}$,
+counting only on-time resolutions weighted by severity $s_i$.
 
-\subsection{Baselines}
-\label{sec:baselines}
-
-We evaluate five methods:
-
-\begin{enumerate}[leftmargin=*]
-  \item \textbf{Deterministic:} A greedy planner that sorts incidents by
-    (severity~$\downarrow$, deadline~$\uparrow$) and dispatches the nearest
-    available vehicle contributing at least one uncovered capability. No LLM
-    calls; serves as the efficiency upper bound.
-  \item \textbf{Zero-Shot LLM:} A single prompt encodes the full scenario
-    (vehicles, incidents, restricted edges) and asks the model to output a
-    JSON dispatch list. Executed without validation.
-  \item \textbf{ReAct (Ablated):} Full ReAct loop without the ValidatorTool.
-    Dispatches are executed directly; invalid actions corrupt world state.
-  \item \textbf{ReAct (Full):} Full ReAct loop with the ValidatorTool.
-    Invalid dispatches return an error message; the agent self-corrects.
-  \item \textbf{AgentKit (Ours):} Code-first architecture described in
-    \S\ref{sec:agentkit}. LLM called only for ethical tie-breaking.
-\end{enumerate}
-
-\subsection{Metrics}
-\label{sec:metrics}
-
-\paragraph{PWRS (Priority-Weighted Resolution Score).}
+\paragraph{Cap-PWRS.}
 \begin{equation}
-  \text{PWRS} = \frac{\sum_{i} s_i \cdot \mathbf{1}[\text{resolved}_i \wedge t_i^* \leq d_i]}
-                      {\sum_{i} s_i}
+  \text{cap\_cov}_i = \frac{|C_i^{\text{cov}} \cap C_i^{\text{req}}|}{|C_i^{\text{req}}|}
+  \cdot \max\!\left(0,1-\tfrac{t_{\text{res}}-d_i}{d_i}\right),
+  \quad
+  \text{Cap-PWRS} = \frac{\sum_i s_i \cdot \text{cap\_cov}_i}{\sum_i s_i}
 \end{equation}
-where $s_i$ is severity, $t_i^*$ is arrival time, and $d_i$ is the deadline.
-Only on-time resolutions count toward PWRS.
+Awards partial credit for multi-vehicle progress with a linear late penalty.
+We also report resolution rate, deadline adherence, violation count, and step
+efficiency ($N_{\text{resolved}}/N_{\text{steps}}$). All LLM experiments use
+\texttt{gemini-2.5-flash}; each scenario is run once with a 40-step budget.
 
-\paragraph{Cap-PWRS (Capability-Coverage PWRS).}
-\begin{equation}
-  \text{cap\_coverage}_i = \frac{|\,C_i^{\text{cov}} \cap C_i^{\text{req}}\,|}
-                                 {|\,C_i^{\text{req}}\,|}
-  \cdot \text{time\_penalty}_i
-  \qquad
-  \text{Cap-PWRS} = \frac{\sum_{i} s_i \cdot \text{cap\_coverage}_i}
-                          {\sum_{i} s_i}
-\end{equation}
-Cap-PWRS awards partial credit for multi-vehicle progress; the linear time
-penalty (\S\ref{sec:agentkit}) applies for late resolutions.
-
-\paragraph{Resolution Rate.}
-$N_{\text{resolved}} / N_{\text{total}}$ (count-based, ignores severity).
-
-\paragraph{Deadline Adherence.}
-Fraction of resolved incidents arriving at or before deadline.
-
-\paragraph{Violation Count.}
-Number of ValidatorTool rejections per run. Zero for Deterministic and
-AgentKit (code enforces constraints before calling the validator).
-
-\paragraph{Step Efficiency.}
-$N_{\text{resolved}} / N_{\text{steps}}$. Not applicable to zero-shot.
-
-\subsection{Experimental Details}
-\label{sec:details}
-
-All LLM experiments use \texttt{gemini-2.5-flash} via the Google Gemini API.
-Each scenario is run once per mode; all runs were conducted in May 2026 on
-the same hardware. The step budget is 40 LLM calls per scenario for ReAct
-modes. AgentKit's LLM budget is at most 1 call per Tier~3 scenario (ethical
-tie-breaking only).
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Results}
 \label{sec:results}
 
-\subsection{Overall Performance}
-\label{sec:overall}
-
-Table~\ref{tab:main} presents the full results. Several patterns are
-immediately apparent.
+Table~\ref{tab:main} presents full per-tier results and Table~\ref{tab:ablation}
+shows per-method means. Several patterns are immediately apparent.
 
 \begin{table}[t]
 \centering
-\caption{Main results across all tiers (1 run per scenario, 5 scenarios per tier).
-  \textbf{Bold} indicates best value per column per tier.
-  AgentKit and Deterministic achieve zero violations across all tiers.}
+\caption{Main results across all tiers. \textbf{Bold}: best value per column per tier.
+  AgentKit and Deterministic achieve zero violations on all tiers.}
 \label{tab:main}
-\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{llcccccr}
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{llcccccc}
 \toprule
-\textbf{Method} & \textbf{Tier} & \textbf{PWRS} & \textbf{Cap-PWRS} & \textbf{Res.~Rate} & \textbf{DL~Adh.} & \textbf{Viol.} & \textbf{Step Eff.} \\
+\textbf{Method} & \textbf{Tier} & \textbf{PWRS} & \textbf{Cap-PWRS} & \textbf{Res.} & \textbf{DL~Adh.} & \textbf{Viol.} & \textbf{Step~Eff.} \\
 \midrule
 Deterministic    & 1 & 0.496 & 0.717 & \textbf{1.000} & 0.400 & \textbf{0.0} & \textbf{1.000} \\
 Deterministic    & 2 & \textbf{0.400} & 0.714 & 0.800 & \textbf{0.400} & \textbf{0.0} & \textbf{0.500} \\
@@ -421,56 +234,12 @@ AgentKit (Ours)  & 4 & 0.306 & 0.626 & 0.500 & 0.300 & \textbf{0.0} & \textbf{0.
 \end{tabular}
 \end{table}
 
-\textbf{Tier~1 (Basic Triage).}
-Both Deterministic and AgentKit achieve perfect resolution rate (1.000) and
-identical PWRS (0.496) and Cap-PWRS (0.717) with zero violations and perfect
-step efficiency (1.000), as expected for single-capability scenarios with no
-ethical ties. Ablated ReAct leads on PWRS (0.576) because the unconstrained
-model dispatches vehicles more aggressively; full ReAct scores 0.525 with a
-4\% higher Cap-PWRS (0.744) due to wider world-state exploration before each
-dispatch, but at $2.4\times$ lower step efficiency.
-
-\textbf{Tier~2 (Constraint Satisfaction).}
-Deterministic and AgentKit match exactly (PWRS~0.400, Cap-PWRS~0.714) with
-zero violations. Ablated ReAct and Zero-Shot both achieve higher Cap-PWRS
-(0.807) by dispatching more vehicles per incident, but accumulate violations
-(Zero-Shot: 0.4/run) or lose resolution rate precision. Full ReAct generates
-1.4 validator rejections per run in this tier as the model repeatedly attempts
-to dispatch vehicles to incidents where no uncovered capability is left.
-
-\textbf{Tier~3 (Ethical Prioritization).}
-AgentKit exactly matches the Deterministic planner (PWRS~0.410, Cap-PWRS~0.453),
-indicating that the LLM's humanitarian tie-breaking aligned with the underlying
-severity-deadline priority metric. Ablated ReAct and Zero-Shot lead on PWRS
-(0.460) and resolution rate (Ablated: 1.000) because they dispatch all vehicles
-without constraint overhead. Full ReAct accumulates 3.6 validator rejections
-per run---the highest across all tiers---as the trolley-problem structure causes
-the model to repeatedly retry blocked vehicles while deliberating on priorities.
-
-\textbf{Tier~4 (Dynamic Replanning).}
-Zero-Shot and Ablated ReAct both achieve PWRS~0.506, substantially outperforming
-Deterministic and AgentKit (0.306) and full ReAct (0.306). Zero-Shot's global
-upfront planning captures replanning opportunities that step-by-step methods
-miss because the model encodes the full trigger schedule in its single response.
-AgentKit matches Deterministic exactly because \texttt{replan()} correctly
-rebuilds the plan queue after each trigger fires, but vehicle coverage is
-limited by available fleet after re-routing---the same constraint that limits
-the Deterministic planner. Full ReAct generates 2.2 violations/run as it retries
-routes that have been blocked by infrastructure collapses.
-
-\subsection{Ablation Study}
-\label{sec:ablation}
-
-Table~\ref{tab:ablation} reports per-method means across all four tiers.
-
 \begin{table}[t]
 \centering
-\caption{Ablation study: per-method means across all four tiers.
-  AgentKit achieves the same zero-violation profile as Deterministic while
-  matching its PWRS profile and adding LLM-guided ethical reasoning on Tier~3.}
+\caption{Ablation study: per-method means across all four tiers.}
 \label{tab:ablation}
 \small
-\renewcommand{\arraystretch}{1.15}
+\renewcommand{\arraystretch}{1.05}
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Method} & \textbf{Mean PWRS} & \textbf{Mean Cap-PWRS} & \textbf{Mean Viol./run} & \textbf{Mean Step Eff.} \\
@@ -484,235 +253,162 @@ AgentKit (Ours)   & 0.403 & 0.627 & \textbf{0.0} & \textbf{0.700} \\
 \end{tabular}
 \end{table}
 
-The ablation isolates each architectural component's contribution:
+\paragraph{Tier 1 (Basic Triage).}
+Deterministic and AgentKit achieve identical results (PWRS 0.496, Cap-PWRS
+0.717, zero violations, step efficiency 1.000). Ablated ReAct leads on PWRS
+(0.576) by dispatching more aggressively; full ReAct scores 0.525 with
+slightly higher Cap-PWRS (0.744) from wider world-state exploration, but at
+$2.4\times$ lower step efficiency.
 
-\begin{itemize}[leftmargin=*]
-  \item \textbf{AgentKit vs.\ Deterministic:} AgentKit matches Deterministic
-    exactly on all four tiers (mean PWRS 0.403, zero violations). The
-    LLM-guided ethical tie-breaking on Tier~3 produced outcomes consistent
-    with the severity-deadline priority metric, yielding no PWRS improvement
-    but confirming alignment between humanistic LLM reasoning and the
-    quantitative priority function.
+\paragraph{Tier 2 (Constraint Satisfaction).}
+Deterministic and AgentKit match exactly (PWRS 0.400, Cap-PWRS 0.714) with
+zero violations. Ablated ReAct and Zero-Shot both achieve higher Cap-PWRS
+(0.807) by dispatching more vehicles per incident, but accumulate violations
+or lose resolution rate precision. Full ReAct generates 1.4 validator
+rejections per run as the model repeatedly attempts dispatches to incidents
+where no uncovered capability remains.
 
-  \item \textbf{ValidatorTool cost:} Comparing ReAct (Full) to ReAct (Ablated)
-    reveals that the validator \emph{hurts} PWRS in three of four tiers
-    (mean PWRS 0.410 vs.\ 0.486). The validator catches 0--3.6 illegal attempts
-    per run, but the correction feedback loop increases total steps and causes
-    the model to over-deliberate on constrained decisions. The validator's safety
-    guarantee (no illegal action executes) comes at a significant efficiency cost.
+\paragraph{Tier 3 (Ethical Prioritization).}
+AgentKit exactly matches the Deterministic planner (PWRS 0.410, Cap-PWRS
+0.453), confirming the LLM's humanitarian tie-breaking aligned with the
+severity-deadline metric. Ablated ReAct and Zero-Shot lead on PWRS (0.460)
+by dispatching all vehicles without constraint overhead. Full ReAct accumulates
+3.6 validator rejections per run as the trolley-problem structure causes
+repeated retries of blocked vehicles.
 
-  \item \textbf{Zero-shot vs.\ ReAct (Full):} Zero-shot outperforms full ReAct
-    on Tier~3 and Tier~4 PWRS. On Tier~4 in particular (0.506 vs.\ 0.306), the
-    model's single global plan encodes infrastructure triggers implicitly, whereas
-    full ReAct's step-by-step discovery of failures incurs validator-correction
-    overhead on routes that have already become invalid.
+\paragraph{Tier 4 (Dynamic Replanning).}
+Zero-Shot and Ablated ReAct both achieve PWRS 0.506, outperforming
+Deterministic and AgentKit (0.306) and Full ReAct (0.306). Zero-Shot's global
+upfront planning captures replanning opportunities that step-by-step methods
+miss because the model encodes the full trigger schedule in its single
+response. AgentKit matches Deterministic because \texttt{replan()} correctly
+rebuilds the plan queue after each trigger fires, but vehicle coverage is
+bounded by available fleet after re-routing.
 
-  \item \textbf{AgentKit vs.\ ReAct:} AgentKit achieves the same zero-violation
-    guarantee as Deterministic with $4\times$--$9\times$ better step efficiency
-    than full ReAct. Because all routing and matching is done in code, the model
-    never wastes steps on observation, route-check, or correction turns.
-\end{itemize}
+\paragraph{Ablation and step efficiency.}
+Adding the ValidatorTool \emph{hurts} PWRS in three of four tiers (Full vs.
+Ablated: mean PWRS 0.410 vs.\ 0.486). The validator catches 0 to 3.6 illegal
+attempts per run, but the correction feedback loop increases total steps and
+causes the model to over-deliberate on constrained decisions. AgentKit achieves
+the same zero-violation guarantee as Deterministic with $4\times$ to $9\times$
+better step efficiency than Full ReAct because all routing is performed by
+vehicle-type-aware Dijkstra inside \texttt{\_match\_vehicle()} at zero LLM
+cost. Of the ReAct loop overhead, approximately 42\% of steps are initial
+observation calls needed to ground the LLM, 29\% are route-verification
+\texttt{get\_shortest\_path} calls, and only 29\% are productive dispatches.
+For AgentKit, 100\% of steps are dispatches.
 
-\subsection{Step Efficiency Analysis}
-\label{sec:stepeff}
-
-AgentKit's step efficiency is 1.000 on Tier~1 (each step is a dispatch).
-The ReAct loop incurs three categories of overhead:
-
-\begin{enumerate}[leftmargin=*]
-  \item \textbf{Observation steps ($\sim$42\%).} The initial triple-call to
-    \texttt{get\_map\_state}, \texttt{get\_incidents}, and \texttt{get\_vehicles}
-    is necessary to ground the LLM. This is a fixed cost of $\approx$3 steps
-    per scenario.
-  \item \textbf{Route verification steps ($\sim$29\%).} Each
-    \texttt{get\_shortest\_path} call before a dispatch confirms passability.
-    AgentKit performs this in code via the vehicle-type-aware Dijkstra call
-    inside \texttt{\_match\_vehicle}, incurring zero LLM steps.
-  \item \textbf{Dispatch steps ($\approx$29\%).} The only steps that directly
-    advance incident resolution. For AgentKit, 100\% of steps are dispatches.
-\end{enumerate}
-
-The gap between AgentKit and ReAct step efficiency thus reflects the cost
-of LLM grounding. In settings where hallucinated actions have real-world
-consequences---emergency response foremost among them---this grounding is
-valuable when the LLM adds judgment; it is pure overhead when it is merely
-replicating what code could compute deterministically.
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{What Works}
-\label{sec:works}
-
 \textbf{Code-first design eliminates constraint violations.}
-AgentKit achieves zero violations across all 20 scenarios and 4 tiers.
-This is because every dispatch decision passes through
-\texttt{\_match\_vehicle()} (which enforces capability contribution,
-capacity, and route reachability in code) and then through the
-ValidatorTool before any world state mutation. No LLM step is needed
-to check physical feasibility.
+AgentKit achieves zero violations across all 20 scenarios because every
+dispatch passes through \texttt{\_match\_vehicle()} (enforcing capability
+contribution, capacity, and route reachability in code) and then through the
+ValidatorTool before any world state mutation. By advancing the simulation
+clock on every observation cycle, AgentKit also detects Tier~4 infrastructure
+failures immediately rather than only on dispatch arrival, ensuring
+\texttt{replan()} fires as soon as a bridge collapses or hospital floods.
+Cap-PWRS reveals substantial multi-vehicle partial progress on Tier~2
+incidents (Cap-PWRS significantly exceeds binary PWRS for all methods),
+confirming that vehicles are covering individual capabilities even when full
+resolution is not achieved within the step budget.
 
-\textbf{Proactive trigger detection improves Tier~4 reliability.}
-By calling \texttt{advance\_clock(current\_time)} on every observation
-cycle, AgentKit detects infrastructure failures independently of whether
-a dispatch is in progress. The ReAct agent detects triggers only through
-\texttt{dispatch\_vehicle} response alerts---an event-driven approach that
-misses triggers during batch-planning phases. AgentKit's proactive approach
-ensures \texttt{replan()} is triggered immediately when a bridge collapses
-or hospital floods.
+\vspace{0.25em}
+\textbf{ValidatorTool correction loops are costly.}
+The full ReAct loop achieves lower mean PWRS (0.410) than Ablated ReAct
+(0.486). The validator correctly blocks illegal dispatches (1.8 rejections/run
+average), but the structured error feedback causes the model to repeatedly
+retry rejected vehicles rather than moving to lower-priority incidents.
+Validator-augmented agents likely require explicit retry budgets or
+negative-example injection to avoid exhausting the step budget in correction
+cycles.
 
-\textbf{Selective LLM usage for ethical judgment.}
-On Tier~3 scenarios with genuine ethical ties (identical severity and
-deadline), AgentKit consults \texttt{gemini-2.5-flash} with a minimal
-structured prompt asking it to order tied incidents on humanitarian grounds.
-The final PWRS equals the Deterministic planner---the LLM's priorities aligned
-with the severity metric---confirming that selective consultation avoids
-over-using LLMs while preserving human-value reasoning for cases that code
-cannot adjudicate.
+\vspace{0.25em}
+\textbf{Limitations and failure modes.}
+Tier~4 resolution is bounded by post-collapse vehicle availability (PWRS
+0.306 for both Deterministic and AgentKit), not a planning deficit. The LLM
+ethical tie-breaking feature is difficult to evaluate because the LLM's
+priorities coincided with the quantitative metric, making it impossible to
+distinguish a good LLM call from mere agreement. All LLM experiments use a
+single model family (\texttt{gemini-2.5-flash}); run-to-run variance is
+unquantified since each scenario is run once; and the benchmark covers 20
+scenarios on a fixed 16-node graph rather than real-world scale.
 
-\textbf{Cap-PWRS reveals hidden progress.}
-On Tier~2, Cap-PWRS significantly exceeds binary PWRS for all methods.
-This gap quantifies multi-vehicle progress: vehicles are being dispatched
-that cover individual capabilities of complex incidents, even when full
-binary resolution is not achieved within the step budget. Cap-PWRS is the
-recommended primary metric for Tier~2 and above.
-
-\subsection{What Doesn't Work}
-\label{sec:doesnt}
-
-\textbf{Validators hurt step-wise agents.}
-The full ReAct loop with ValidatorTool achieves \emph{lower} mean PWRS (0.410)
-than Ablated ReAct (0.486). The validator correctly catches illegal dispatches
-(1.8 rejections/run on average), but the structured error feedback causes the
-model to repeatedly retry rejected vehicles rather than moving to lower-priority
-incidents. This suggests validator-augmented agents require explicit retry
-budgets or negative example injection to avoid correction loops that exhaust
-the step budget.
-
-\textbf{Tier~3 ethical reasoning is hard to evaluate.}
-Although AgentKit invokes \texttt{gemini-2.5-flash} for ethical tie-breaking,
-the PWRS outcome exactly matches the Deterministic planner. The LLM's
-humanitarian ordering happened to align with the severity-deadline metric,
-leaving no measurable improvement. This limits the observability of the
-feature---it is impossible to distinguish ``LLM made a good call'' from ``the
-priority function and the LLM agree.''
-
-\textbf{Tier~4 resolution is bounded by post-trigger vehicle availability.}
-Dynamic triggers collapse road segments mid-mission, rendering some incidents
-unreachable regardless of planning quality. Both Deterministic and AgentKit
-achieve PWRS~0.306 on Tier~4---the ceiling imposed by fleet coverage after
-re-routing, not a planning failure.
-
-\subsection{Limitations}
-\label{sec:limits}
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Single LLM family and version.}
-    All LLM experiments use \texttt{gemini-2.5-flash}. Different models may
-    exhibit different patterns of constraint violation frequency and ethical
-    reasoning quality. The AgentKit architecture is provider-agnostic; the
-    \texttt{provider} flag supports Anthropic models as well.
-  \item \textbf{One run per scenario.}
-    Statistical variance across runs is not quantified. LLM-dependent modes
-    (zero-shot, ReAct, Tier~3 AgentKit) may show run-to-run variation.
-  \item \textbf{No simulation clock advancement between dispatches.}
-    Vehicles dispatched simultaneously do not interact; a true discrete-event
-    simulation would support richer concurrency.
-  \item \textbf{Benchmark coverage.}
-    RescueBench covers 20 scenarios; real emergency dispatch involves far
-    more incident types, larger fleets, and continuous rather than discrete time.
-\end{itemize}
-
-% ─────────────────────────────────────────────────────────────────────────────
 \section{Conclusion}
 \label{sec:conclusion}
 
 We evaluated five emergency response agents across the full RescueBench
-benchmark (20 scenarios, 4 tiers), introducing the AgentKit architecture,
-the Cap-PWRS metric, and a step efficiency analysis. AgentKit achieves zero
-constraint violations and matches the Deterministic planner exactly on all
-four tiers, demonstrating that code-first design produces both reliability
-and efficiency without sacrificing PWRS.
+benchmark (20 scenarios, 4 tiers), introducing the AgentKit architecture, the
+Cap-PWRS metric, and a step efficiency analysis. AgentKit achieves zero
+constraint violations and matches the Deterministic planner on all four tiers,
+demonstrating that code-first design produces deterministic-grade reliability
+with $4\times$ to $9\times$ better step efficiency than full ReAct. The
+ValidatorTool, while correctly blocking illegal actions, reduces PWRS in a
+step-limited ReAct loop by inducing correction cycles, suggesting that
+tool-guarded agents require explicit self-correction budgets or
+negative-example injection. Future work should explore retry budgets for
+validator-augmented ReAct and evaluation of AgentKit's ethical reasoning
+across a broader set of LLM providers to determine when LLM humanitarian
+priorities diverge from severity-based metrics.
 
-The primary insight is architectural: for structured domains with explicit
-constraint sets, delegating decisions to code produces higher reliability and
-$4\times$--$9\times$ better step efficiency than full ReAct. A second key
-finding is that the ValidatorTool, while correctly blocking illegal actions,
-reduces PWRS in a step-limited ReAct loop by inducing correction cycles---
-suggesting that tool-guarded agents require explicit step budgets for
-self-correction or negative-example injection to avoid this overhead.
-
-The Cap-PWRS metric reveals real multi-vehicle progress on Tier~2 incidents
-that binary PWRS misses. Future work should explore structured multi-agent
-formulations, retry budgets for validator-augmented ReAct, and evaluation
-of AgentKit's ethical reasoning across a broader set of LLM providers to
-determine when LLM humanitarian priorities diverge from severity-based metrics.
-
-% ─────────────────────────────────────────────────────────────────────────────
-\bibliographystyle{plainnat}
 \begin{thebibliography}{99}
+\small
 
 \bibitem[Chevalier-Boisvert et al.(2019)]{chevalier2019babyai}
-Chevalier-Boisvert, M., Bahdanau, D., Lahlou, S., Willems, L., Saharia, C.,
-Nguyen, T.~H., and Bengio, Y.
-\newblock BabyAI: A platform to study the sample efficiency of grounded language learning.
-\newblock In \textit{International Conference on Learning Representations (ICLR)}, 2019.
+Chevalier-Boisvert, M., et al.
+BabyAI: A platform to study the sample efficiency of grounded language learning.
+\textit{ICLR}, 2019.
 
 \bibitem[Chen et al.(2022)]{chen2022code}
-Chen, M., Tworek, J., Jun, H., Yuan, Q., Pinto, H.~P. de~O., Kaplan, J.,
-Edwards, H., Burda, Y., Joseph, N., Brockman, G., et al.
-\newblock Evaluating large language models trained on code.
-\newblock \textit{arXiv preprint arXiv:2107.03374}, 2022.
+Chen, M., et al.
+Evaluating large language models trained on code.
+\textit{arXiv:2107.03374}, 2022.
 
 \bibitem[Group~2(2026)]{group2bench2026}
 Group~2, CS~498.
-\newblock RescueBench: A tiered benchmark for emergency response allocation agents.
-\newblock Technical report, University of Illinois Urbana-Champaign, 2026.
+RescueBench: A tiered benchmark for emergency response allocation agents.
+Technical report, UIUC, 2026.
 
 \bibitem[Khamis et al.(2015)]{khamis2015}
 Khamis, A., Hussein, A., and Elmogy, A.
-\newblock Multi-robot task allocation: A review of the state-of-the-art.
-\newblock In \textit{Cooperative Robots and Sensor Networks 2015}, pages 31--51. Springer, 2015.
+Multi-robot task allocation: A review.
+\textit{Cooperative Robots and Sensor Networks}, pp.\ 31--51. Springer, 2015.
 
 \bibitem[Liu et al.(2019)]{liu2019multi}
-Liu, Y., Li, S., Liu, X., and Wang, L.
-\newblock Multi-objective vehicle routing optimization for emergency logistics.
-\newblock \textit{Transportation Research Part C}, 107:321--340, 2019.
+Liu, Y., et al.
+Multi-objective vehicle routing optimization for emergency logistics.
+\textit{Transportation Research Part C}, 107:321--340, 2019.
 
 \bibitem[Schick et al.(2023)]{schick2023toolformer}
-Schick, T., Dwivedi-Yu, J., Dess\`{i}, R., Raileanu, R., Lomeli, M.,
-Zettlemoyer, L., Cancedda, N., and Scialom, T.
-\newblock Toolformer: Language models can teach themselves to use tools.
-\newblock In \textit{Advances in Neural Information Processing Systems (NeurIPS)}, 2023.
+Schick, T., et al.
+Toolformer: Language models can teach themselves to use tools.
+\textit{NeurIPS}, 2023.
 
 \bibitem[Shinn et al.(2023)]{shinn2023reflexion}
-Shinn, N., Cassano, F., Labash, B., Gopinath, A., Narasimhan, K., and
-Yao, S.
-\newblock Reflexion: Language agents with verbal reinforcement learning.
-\newblock In \textit{Advances in Neural Information Processing Systems (NeurIPS)}, 2023.
+Shinn, N., et al.
+Reflexion: Language agents with verbal reinforcement learning.
+\textit{NeurIPS}, 2023.
 
 \bibitem[Shridhar et al.(2021)]{shridhar2021alfworld}
-Shridhar, M., Yuan, X., C\^{o}t\'{e}, M.-A., Bisk, Y., Trischler, A., and
-Hausknecht, M.
-\newblock ALFWorld: Aligning text and embodied environments for interactive learning.
-\newblock In \textit{International Conference on Learning Representations (ICLR)}, 2021.
+Shridhar, M., et al.
+ALFWorld: Aligning text and embodied environments for interactive learning.
+\textit{ICLR}, 2021.
 
-\bibitem[Stone and Veloso(2000)]{stone2000}
+\bibitem[Stone \& Veloso(2000)]{stone2000}
 Stone, P. and Veloso, M.
-\newblock Multiagent systems: A survey from a machine learning perspective.
-\newblock \textit{Autonomous Robots}, 8(3):345--383, 2000.
+Multiagent systems: A survey from a machine learning perspective.
+\textit{Autonomous Robots}, 8(3):345--383, 2000.
 
 \bibitem[Yao et al.(2023)]{yao2023react}
-Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., and Cao, Y.
-\newblock ReAct: Synergizing reasoning and acting in language models.
-\newblock In \textit{International Conference on Learning Representations (ICLR)}, 2023.
+Yao, S., et al.
+ReAct: Synergizing reasoning and acting in language models.
+\textit{ICLR}, 2023.
 
-\bibitem[Zhang et al.(2017)]{zhang2017ems}
+\bibitem[Zhang \& Li(2017)]{zhang2017ems}
 Zhang, Z.-H. and Li, K.
-\newblock A novel probabilistic formulation for locating and sizing emergency
-medical service stations.
-\newblock \textit{Annals of Operations Research}, 229(1):813--835, 2017.
+A novel probabilistic formulation for locating and sizing EMS stations.
+\textit{Annals of Operations Research}, 229(1):813--835, 2017.
 
 \end{thebibliography}
 
