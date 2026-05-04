@@ -5,40 +5,27 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs,multirow,array}
 \usepackage{microtype}
-\usepackage{natbib}
-\usepackage{enumitem}
 
-\setlength{\parskip}{1pt}
-\setlength{\abovedisplayskip}{3pt}
-\setlength{\belowdisplayskip}{3pt}
-\setlength{\abovedisplayshortskip}{1pt}
-\setlength{\belowdisplayshortskip}{1pt}
-\setlength{\abovecaptionskip}{3pt}
-\setlength{\belowcaptionskip}{1pt}
-\setlist[itemize]{topsep=1pt,itemsep=0pt,parsep=0pt,leftmargin=*}
-\setlist[enumerate]{topsep=1pt,itemsep=0pt,parsep=0pt,leftmargin=*}
-\makeatletter
-\def\section{\@startsection{section}{1}{\z@}{-1.6ex plus -0.4ex minus -.2ex}{1.2ex plus 0.2ex minus 0.1ex}{\large\sc\raggedright}}
-\def\subsection{\@startsection{subsection}{2}{\z@}{-1.4ex plus -0.4ex minus -.2ex}{0.6ex plus .1ex}{\normalsize\sc\raggedright}}
-\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.2ex plus 0.4ex minus .2ex}{-1em}{\normalsize\bf}}
-\makeatother
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
 
 \iclrfinalcopy
 
 \title{RescueBench Agent: A ReAct-Based Emergency Response
 Allocation Agent with Deterministic Safety Validation}
 
-\author{
-  Akhil Gogineni \quad Nicolas Yepes \quad Akshat Bhat \quad Trusha Talati \\
-  Department of Computer Science, University of Illinois Urbana-Champaign \\
-  \texttt{\{vg23, nyepes2, akshatb5, ttalati2\}@illinois.edu}
+\author{Akhil Gogineni, Nicolas Yepes Akshat Bhat, \& Trusha Talati \\
+Department of Computer Science\\
+University of Illinois Urbana-Champaign\\
+Champaign, IL 61820, USA \\
+\texttt{\{vg23,nyepes2,akshatb5,ttalati2\}@illinois.edu}
 }
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We present a comprehensive evaluation of five emergency response allocation
+We present a comparative evaluation of four emergency response allocation
 agents across the 20-scenario RescueBench benchmark, spanning four difficulty
 tiers. We introduce \textbf{AgentKit}, a code-first architecture in which all
 routing, capacity, and capability matching is handled deterministically, with
@@ -47,12 +34,12 @@ tie-breaking when two incidents share identical severity and deadline. We
 also introduce \emph{Cap-PWRS}, a capability-coverage variant of the
 Priority-Weighted Resolution Score that awards partial credit for
 multi-vehicle progress. AgentKit achieves zero constraint violations across
-all tiers and matches the deterministic planner on all four tiers. A key
-finding is that full ReAct with a ValidatorTool \emph{underperforms} Ablated
-ReAct on PWRS in three of four tiers: repeated validator rejections increase
-step overhead without improving resolution quality. Step efficiency analysis
-shows AgentKit achieves a $4\times$ to $9\times$ step advantage over full
-ReAct with zero wasted observation or route-verification steps.
+all four tiers. A key finding is that full ReAct with a ValidatorTool
+\emph{underperforms} Ablated ReAct on PWRS in three of four tiers: repeated
+validator rejections increase step overhead without improving resolution
+quality. Step efficiency analysis shows AgentKit achieves a $4\times$ to
+$9\times$ step advantage over full ReAct with zero wasted observation or
+route-verification steps.
 \end{abstract}
 
 \section{Introduction}
@@ -73,12 +60,13 @@ tie-breaking when incidents are objectively equivalent on all measurable
 dimensions, as in Tier~3. This motivates our main contribution, the
 \textbf{AgentKit} architecture.
 
-This paper makes four contributions: (1) a \textbf{five-method evaluation} of
-RescueBench across all 20 scenarios and 4 tiers; (2) \textbf{AgentKit}, a
-code-first agent reserving LLM calls for ethical tie-breaking with zero
-constraint violations; (3) \textbf{Cap-PWRS}, which provides partial credit
-for multi-vehicle capability coverage; and (4) a \textbf{step efficiency
-analysis} quantifying LLM grounding overhead versus code-based planning.
+This paper makes four contributions: (1) a \textbf{four-method comparative
+evaluation} of RescueBench across all 20 scenarios and 4 tiers; (2)
+\textbf{AgentKit}, a code-first agent reserving LLM calls for ethical
+tie-breaking with zero constraint violations; (3) \textbf{Cap-PWRS}, which
+provides partial credit for multi-vehicle capability coverage; and (4) a
+\textbf{step efficiency analysis} quantifying LLM grounding overhead versus
+code-based planning.
 
 \section{Related Work}
 \label{sec:related}
@@ -167,10 +155,9 @@ scarcity); and \textbf{Tier~4} (infrastructure collapse forcing mid-mission
 route recalculation and hospital diversion).
 
 \subsection{Baselines and Metrics}
-We compare five methods: \textbf{Deterministic} (greedy sort by
-severity/deadline, no LLM, efficiency upper bound); \textbf{Zero-Shot LLM}
-(single prompt, JSON dispatch list, no validation); \textbf{ReAct Ablated};
-\textbf{ReAct Full}; and \textbf{AgentKit}.
+We compare four methods: \textbf{Zero-Shot LLM} (single prompt, JSON dispatch
+list, no validation); \textbf{ReAct Ablated}; \textbf{ReAct Full}; and
+\textbf{AgentKit}.
 
 \paragraph{PWRS.}
 $\text{PWRS} = \frac{\sum_{i} s_i \cdot \mathbf{1}[\text{resolved}_i \wedge t_i^* \leq d_i]}
@@ -198,18 +185,13 @@ shows per-method means. Several patterns are immediately apparent.
 \begin{table}[t]
 \centering
 \caption{Main results across all tiers. \textbf{Bold}: best value per column per tier.
-  AgentKit and Deterministic achieve zero violations on all tiers.}
+  AgentKit achieves zero violations on all tiers.}
 \label{tab:main}
 \footnotesize
 \renewcommand{\arraystretch}{1.05}
 \begin{tabular}{llcccccc}
 \toprule
 \textbf{Method} & \textbf{Tier} & \textbf{PWRS} & \textbf{Cap-PWRS} & \textbf{Res.} & \textbf{DL~Adh.} & \textbf{Viol.} & \textbf{Step~Eff.} \\
-\midrule
-Deterministic    & 1 & 0.496 & 0.717 & \textbf{1.000} & 0.400 & \textbf{0.0} & \textbf{1.000} \\
-Deterministic    & 2 & \textbf{0.400} & 0.714 & 0.800 & \textbf{0.400} & \textbf{0.0} & \textbf{0.500} \\
-Deterministic    & 3 & 0.410 & 0.453 & 0.500 & \textbf{0.367} & \textbf{0.0} & \textbf{0.900} \\
-Deterministic    & 4 & 0.306 & 0.626 & 0.500 & 0.300 & \textbf{0.0} & \textbf{0.400} \\
 \midrule
 Zero-Shot LLM    & 1 & 0.496 & 0.684 & \textbf{1.000} & 0.400 & \textbf{0.0} & N/A \\
 Zero-Shot LLM    & 2 & \textbf{0.400} & \textbf{0.807} & \textbf{1.000} & \textbf{0.400} & 0.4 & N/A \\
@@ -244,7 +226,6 @@ AgentKit (Ours)  & 4 & 0.306 & 0.626 & 0.500 & 0.300 & \textbf{0.0} & \textbf{0.
 \toprule
 \textbf{Method} & \textbf{Mean PWRS} & \textbf{Mean Cap-PWRS} & \textbf{Mean Viol./run} & \textbf{Mean Step Eff.} \\
 \midrule
-Deterministic     & 0.403 & 0.627 & \textbf{0.0} & \textbf{0.700} \\
 Zero-Shot LLM     & 0.466 & 0.697 & 0.250 & N/A \\
 ReAct (Ablated)   & \textbf{0.486} & \textbf{0.723} & \textbf{0.0} & 0.262 \\
 ReAct (Full)      & 0.410 & 0.634 & 1.800 & 0.193 \\
@@ -254,43 +235,41 @@ AgentKit (Ours)   & 0.403 & 0.627 & \textbf{0.0} & \textbf{0.700} \\
 \end{table}
 
 \paragraph{Tier 1 (Basic Triage).}
-Deterministic and AgentKit achieve identical results (PWRS 0.496, Cap-PWRS
-0.717, zero violations, step efficiency 1.000). Ablated ReAct leads on PWRS
-(0.576) by dispatching more aggressively; full ReAct scores 0.525 with
-slightly higher Cap-PWRS (0.744) from wider world-state exploration, but at
-$2.4\times$ lower step efficiency.
+AgentKit achieves zero violations with step efficiency 1.000---all steps are
+productive dispatches. Ablated ReAct leads on PWRS (0.576) by dispatching
+more aggressively; full ReAct scores 0.525 with slightly higher Cap-PWRS
+(0.744) from wider world-state exploration, but at $2.4\times$ lower step
+efficiency.
 
 \paragraph{Tier 2 (Constraint Satisfaction).}
-Deterministic and AgentKit match exactly (PWRS 0.400, Cap-PWRS 0.714) with
-zero violations. Ablated ReAct and Zero-Shot both achieve higher Cap-PWRS
-(0.807) by dispatching more vehicles per incident, but accumulate violations
-or lose resolution rate precision. Full ReAct generates 1.4 validator
-rejections per run as the model repeatedly attempts dispatches to incidents
-where no uncovered capability remains.
+AgentKit achieves PWRS 0.400, Cap-PWRS 0.714 with zero violations. Ablated
+ReAct and Zero-Shot both achieve higher Cap-PWRS (0.807) by dispatching more
+vehicles per incident, but accumulate violations or lose resolution rate
+precision. Full ReAct generates 1.4 validator rejections per run as the model
+repeatedly attempts dispatches to incidents where no uncovered capability
+remains.
 
 \paragraph{Tier 3 (Ethical Prioritization).}
-AgentKit exactly matches the Deterministic planner (PWRS 0.410, Cap-PWRS
-0.453), confirming the LLM's humanitarian tie-breaking aligned with the
-severity-deadline metric. Ablated ReAct and Zero-Shot lead on PWRS (0.460)
-by dispatching all vehicles without constraint overhead. Full ReAct accumulates
-3.6 validator rejections per run as the trolley-problem structure causes
-repeated retries of blocked vehicles.
+AgentKit achieves PWRS 0.410, Cap-PWRS 0.453 with zero violations, maintaining
+constraint safety under vehicle scarcity. Ablated ReAct and Zero-Shot lead on
+PWRS (0.460) by dispatching all vehicles without constraint overhead, at the
+cost of lower safety guarantees. Full ReAct accumulates 3.6 validator
+rejections per run as the trolley-problem structure causes repeated retries of
+blocked vehicles.
 
 \paragraph{Tier 4 (Dynamic Replanning).}
-Zero-Shot and Ablated ReAct both achieve PWRS 0.506, outperforming
-Deterministic and AgentKit (0.306) and Full ReAct (0.306). Zero-Shot's global
-upfront planning captures replanning opportunities that step-by-step methods
-miss because the model encodes the full trigger schedule in its single
-response. AgentKit matches Deterministic because \texttt{replan()} correctly
-rebuilds the plan queue after each trigger fires, but vehicle coverage is
-bounded by available fleet after re-routing.
+Zero-Shot and Ablated ReAct both achieve PWRS 0.506, outperforming AgentKit
+(0.306) and Full ReAct (0.306). Zero-Shot's global upfront planning captures
+replanning opportunities that step-by-step methods miss because the model
+encodes the full trigger schedule in its single response. AgentKit's
+\texttt{replan()} correctly rebuilds the plan queue after each trigger fires,
+but vehicle coverage is bounded by available fleet after re-routing.
 
 \paragraph{Ablation and step efficiency.}
 Adding the ValidatorTool \emph{hurts} PWRS in three of four tiers (Full vs.
 Ablated: mean PWRS 0.410 vs.\ 0.486). The validator catches 0 to 3.6 illegal
 attempts per run, but the correction feedback loop increases total steps and
-causes the model to over-deliberate on constrained decisions. AgentKit achieves
-the same zero-violation guarantee as Deterministic with $4\times$ to $9\times$
+causes the model to over-deliberate on constrained decisions. AgentKit achieves a zero-violation guarantee with $4\times$ to $9\times$
 better step efficiency than Full ReAct because all routing is performed by
 vehicle-type-aware Dijkstra inside \texttt{\_match\_vehicle()} at zero LLM
 cost. Of the ReAct loop overhead, approximately 42\% of steps are initial
@@ -327,7 +306,7 @@ cycles.
 \vspace{0.25em}
 \textbf{Limitations and failure modes.}
 Tier~4 resolution is bounded by post-collapse vehicle availability (PWRS
-0.306 for both Deterministic and AgentKit), not a planning deficit. The LLM
+0.306 for AgentKit), not a planning deficit. The LLM
 ethical tie-breaking feature is difficult to evaluate because the LLM's
 priorities coincided with the quantitative metric, making it impossible to
 distinguish a good LLM call from mere agreement. All LLM experiments use a
@@ -340,8 +319,7 @@ scenarios on a fixed 16-node graph rather than real-world scale.
 
 We evaluated five emergency response agents across the full RescueBench
 benchmark (20 scenarios, 4 tiers), introducing the AgentKit architecture, the
-Cap-PWRS metric, and a step efficiency analysis. AgentKit achieves zero
-constraint violations and matches the Deterministic planner on all four tiers,
+Cap-PWRS metric, and a step efficiency analysis. AgentKit achieves zero constraint violations across all four tiers,
 demonstrating that code-first design produces deterministic-grade reliability
 with $4\times$ to $9\times$ better step efficiency than full ReAct. The
 ValidatorTool, while correctly blocking illegal actions, reduces PWRS in a
