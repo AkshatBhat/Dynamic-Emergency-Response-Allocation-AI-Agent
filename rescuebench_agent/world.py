@@ -155,6 +155,7 @@ class WorldState:
         self,
         vehicle_type: str | None = None,
         speed_multiplier: float = 1.0,
+        edge_penalties: dict[str, float] | None = None,
     ) -> dict[str, list[tuple[str, float, str]]]:
         """
         Build an undirected adjacency list filtered by passable edges and, if
@@ -170,6 +171,8 @@ class WorldState:
             source = edge["source_node"]
             target = edge["target_node"]
             travel_time = edge["base_travel_time"] / speed
+            if edge_penalties:
+                travel_time += float(edge_penalties.get(edge["id"], 0.0))
             if source in graph:
                 graph[source].append((target, travel_time, edge["id"]))
             if target in graph:
@@ -183,18 +186,48 @@ class WorldState:
             for node_id, neighbors in graph_with_edges.items()
         }
 
+    def edge_penalties_for_strategy(
+        self,
+        route_strategy: str = "fastest",
+        horizon_minutes: float | None = None,
+    ) -> dict[str, float]:
+        if route_strategy == "fastest":
+            return {}
+
+        penalties: dict[str, float] = {}
+        base_penalty = 25.0 if route_strategy == "robust" else 10.0
+        for trigger in self.dynamic_triggers:
+            if trigger.get("fired"):
+                continue
+            edge_id = trigger.get("target_edge")
+            if not edge_id:
+                continue
+            trigger_time = float(trigger.get("trigger_time", self.current_time))
+            gap = max(0.0, trigger_time - self.current_time)
+            if horizon_minutes is not None and gap <= horizon_minutes:
+                penalties[edge_id] = penalties.get(edge_id, 0.0) + base_penalty + (horizon_minutes - gap)
+            else:
+                penalties[edge_id] = penalties.get(edge_id, 0.0) + (base_penalty / max(1.0, gap))
+        return penalties
+
     def shortest_path_details(
         self,
         source: str,
         target: str,
         vehicle_type: str | None = None,
         speed_multiplier: float = 1.0,
+        route_strategy: str = "fastest",
+        horizon_minutes: float | None = None,
     ) -> tuple[float, list[str], list[float], list[str]]:
         """Shortest path plus leg-level timing details."""
         if source == target:
             return 0.0, [source], [], []
 
-        graph = self.build_graph_with_edges(vehicle_type, speed_multiplier)
+        graph = self.build_graph_with_edges(
+            vehicle_type,
+            speed_multiplier,
+            self.edge_penalties_for_strategy(route_strategy, horizon_minutes),
+        )
         dist = {node: math.inf for node in graph}
         prev_node: dict[str, str | None] = {node: None for node in graph}
         prev_edge: dict[str, str | None] = {node: None for node in graph}
@@ -245,8 +278,17 @@ class WorldState:
         target: str,
         vehicle_type: str | None = None,
         speed_multiplier: float = 1.0,
+        route_strategy: str = "fastest",
+        horizon_minutes: float | None = None,
     ) -> tuple[float, list[str]]:
-        cost, path, _, _ = self.shortest_path_details(source, target, vehicle_type, speed_multiplier)
+        cost, path, _, _ = self.shortest_path_details(
+            source,
+            target,
+            vehicle_type,
+            speed_multiplier,
+            route_strategy,
+            horizon_minutes,
+        )
         return cost, path
 
     def hospital_available_capacity(self, hospital_node: str, reserved_offset: int = 0) -> int:
@@ -288,7 +330,28 @@ class WorldState:
         vehicle: dict,
         preferred_node: str | None = None,
         required_load: int = 0,
+        route_strategy: str = "fastest",
+        limit: int = 1,
     ) -> str | None:
+        options = self.choose_hospital_options(
+            from_node,
+            vehicle,
+            preferred_node=preferred_node,
+            required_load=required_load,
+            route_strategy=route_strategy,
+            limit=limit,
+        )
+        return options[0][0] if options else None
+
+    def choose_hospital_options(
+        self,
+        from_node: str,
+        vehicle: dict,
+        preferred_node: str | None = None,
+        required_load: int = 0,
+        route_strategy: str = "fastest",
+        limit: int = 3,
+    ) -> list[tuple[str, float]]:
         vehicle_type = vehicle.get("type")
         speed_multiplier = self.vehicle_speed_multiplier(vehicle)
 
@@ -298,24 +361,47 @@ class WorldState:
                 return False
             if required_load > 0 and self.hospital_available_capacity(node_id) < required_load:
                 return False
-            cost, _, _, _ = self.shortest_path_details(from_node, node_id, vehicle_type, speed_multiplier)
+            cost, _, _, _ = self.shortest_path_details(
+                from_node,
+                node_id,
+                vehicle_type,
+                speed_multiplier,
+                route_strategy,
+            )
             return not math.isinf(cost)
 
-        if preferred_node and reachable_hospital(preferred_node):
-            return preferred_node
-
-        best_node: str | None = None
-        best_cost: float = math.inf
+        candidates: list[tuple[str, float, float]] = []
+        preferred_bonus = -0.25
         for node_id, node_data in self.nodes.items():
             if not node_data.get("hospital"):
                 continue
             if required_load > 0 and self.hospital_available_capacity(node_id) < required_load:
                 continue
-            cost, _, _, _ = self.shortest_path_details(from_node, node_id, vehicle_type, speed_multiplier)
-            if cost < best_cost:
-                best_cost = cost
-                best_node = node_id
-        return best_node
+            cost, _, _, _ = self.shortest_path_details(
+                from_node,
+                node_id,
+                vehicle_type,
+                speed_multiplier,
+                route_strategy,
+            )
+            if math.isinf(cost):
+                continue
+            score = cost + (preferred_bonus if preferred_node and node_id == preferred_node else 0.0)
+            candidates.append((node_id, cost, score))
+
+        candidates.sort(key=lambda item: item[2])
+        if preferred_node and reachable_hospital(preferred_node):
+            preferred_real_cost, _, _, _ = self.shortest_path_details(
+                from_node,
+                preferred_node,
+                vehicle_type,
+                speed_multiplier,
+                route_strategy,
+            )
+            if all(node_id != preferred_node for node_id, _, _ in candidates):
+                candidates.insert(0, (preferred_node, preferred_real_cost, preferred_real_cost + preferred_bonus))
+        trimmed = candidates[:limit]
+        return [(node_id, cost) for node_id, cost, _ in trimmed]
 
     def vehicle_quantity_capacity(
         self,
@@ -445,10 +531,17 @@ class WorldState:
         vehicle: dict,
         incident: dict,
         hospital_node: str | None = None,
+        route_strategy: str = "fastest",
     ) -> float:
         vehicle_type = vehicle.get("type")
         speed_multiplier = self.vehicle_speed_multiplier(vehicle)
-        total_cost, _ = self.dijkstra(vehicle["location"], incident["location"], vehicle_type, speed_multiplier)
+        total_cost, _ = self.dijkstra(
+            vehicle["location"],
+            incident["location"],
+            vehicle_type,
+            speed_multiplier,
+            route_strategy,
+        )
         if math.isinf(total_cost):
             return math.inf
         quantity_capability = self.quantity_capability(incident)
@@ -460,6 +553,7 @@ class WorldState:
                     hospital_node,
                     vehicle_type,
                     speed_multiplier,
+                    route_strategy,
                 )
                 if math.isinf(hospital_cost):
                     return math.inf
@@ -471,6 +565,7 @@ class WorldState:
         vehicle: dict,
         incident: dict,
         hospital_node: str | None = None,
+        route_strategy: str = "fastest",
     ) -> tuple[float, float]:
         """Estimate arrival time and full mission completion time for one dispatch."""
         vehicle_type = vehicle.get("type")
@@ -480,6 +575,7 @@ class WorldState:
             incident["location"],
             vehicle_type,
             speed_multiplier,
+            route_strategy,
         )
         if math.isinf(arrival_cost):
             return math.inf, math.inf
@@ -494,6 +590,7 @@ class WorldState:
                     hospital_node,
                     vehicle_type,
                     speed_multiplier,
+                    route_strategy,
                 )
                 if math.isinf(hospital_cost):
                     return math.inf, math.inf
@@ -507,6 +604,7 @@ class WorldState:
         hospital_node: str | None,
         reserved_capabilities: list[str],
         reserved_quantity: int,
+        route_strategy: str = "fastest",
     ) -> tuple[float, list[str], float | None]:
         vehicle = self.vehicles[vehicle_id]
         incident = self.incidents[incident_id]
@@ -517,6 +615,7 @@ class WorldState:
             incident["location"],
             vehicle.get("type"),
             speed_multiplier,
+            route_strategy,
         )
         if math.isinf(cost):
             return math.inf, [], None
@@ -540,6 +639,7 @@ class WorldState:
             "reserved_capabilities": list(reserved_capabilities),
             "reserved_quantity": reserved_quantity,
             "planned_hospital": hospital_node,
+            "route_strategy": route_strategy,
         }
         self._refresh_vehicle_schedule(vehicle)
 
@@ -551,6 +651,7 @@ class WorldState:
                 hospital_node,
                 vehicle.get("type"),
                 speed_multiplier,
+                route_strategy,
             )
             expected_hospital_travel = None if math.isinf(hospital_cost) else hospital_cost
         return cost, path, expected_hospital_travel
@@ -624,12 +725,19 @@ class WorldState:
                 continue
 
             target_node = mission.get("target_node")
+            route_strategy = mission.get("route_strategy", "fastest")
             if mission.get("phase") == "to_hospital":
                 quantity = int(mission.get("reserved_quantity", 0))
                 preferred = mission.get("planned_hospital")
                 if quantity > 0:
                     self.release_hospital_capacity(preferred, quantity)
-                new_hospital = self.choose_hospital(vehicle["location"], vehicle, preferred, quantity)
+                new_hospital = self.choose_hospital(
+                    vehicle["location"],
+                    vehicle,
+                    preferred,
+                    quantity,
+                    route_strategy=route_strategy,
+                )
                 if quantity > 0 and new_hospital:
                     self.reserve_hospital_capacity(new_hospital, quantity)
                 vehicle["assigned_hospital"] = new_hospital
@@ -646,6 +754,7 @@ class WorldState:
                 target_node,
                 vehicle.get("type"),
                 self.vehicle_speed_multiplier(vehicle),
+                route_strategy,
             )
             if math.isinf(cost):
                 vehicle["next_event_time"] = None
@@ -725,11 +834,13 @@ class WorldState:
             if quantity_capability == "patient_transport" and reserved_quantity > 0:
                 hospital_node = vehicle.get("assigned_hospital")
                 self.release_hospital_capacity(hospital_node, reserved_quantity)
+                route_strategy = mission.get("route_strategy", "fastest")
                 hospital_node = self.choose_hospital(
                     vehicle["location"],
                     vehicle,
                     hospital_node,
                     reserved_quantity,
+                    route_strategy=route_strategy,
                 )
                 if hospital_node:
                     self.reserve_hospital_capacity(hospital_node, reserved_quantity)
@@ -738,6 +849,7 @@ class WorldState:
                         hospital_node,
                         vehicle.get("type"),
                         self.vehicle_speed_multiplier(vehicle),
+                        route_strategy,
                     )
                     if not math.isinf(cost):
                         vehicle["available"] = False
@@ -755,6 +867,7 @@ class WorldState:
                             "reserved_capabilities": reserved_capabilities,
                             "reserved_quantity": reserved_quantity,
                             "planned_hospital": hospital_node,
+                            "route_strategy": route_strategy,
                         }
                         if now_resolved and incident:
                             incident["resolved"] = True

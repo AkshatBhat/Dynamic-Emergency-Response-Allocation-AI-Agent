@@ -70,6 +70,7 @@ class WorldTool:
         vehicle_id: str,
         incident_id: str,
         hospital_node: str | None = None,
+        route_strategy: str = "fastest",
     ) -> dict:
         """
         Dispatch a vehicle by scheduling a concurrent mission.
@@ -99,6 +100,7 @@ class WorldTool:
                 vehicle,
                 vehicle.get("home_depot"),
                 self.world.vehicle_quantity_capacity(vehicle, incident),
+                route_strategy=route_strategy,
             )
 
         reserved_capabilities, reserved_quantity = self.world.mission_contribution(vehicle, incident, hospital_node)
@@ -114,6 +116,7 @@ class WorldTool:
             hospital_node=hospital_node,
             reserved_capabilities=reserved_capabilities,
             reserved_quantity=reserved_quantity,
+            route_strategy=route_strategy,
         )
         if math.isinf(travel_time):
             return {
@@ -137,6 +140,7 @@ class WorldTool:
             "scheduled_quantity": reserved_quantity,
             "quantity_capability": quantity_capability,
             "hospital_node": hospital_node,
+            "route_strategy": route_strategy,
             "vehicle_reavailable_at": updated_vehicle.get("busy_until"),
         }
         if alerts:
@@ -223,6 +227,7 @@ class ValidatorTool:
         vehicle_id: str,
         incident_id: str,
         hospital_node: str | None = None,
+        route_strategy: str = "fastest",
         count_violation: bool = True,
     ) -> tuple[bool, str]:
         self.world.advance_clock(self.world.current_time)
@@ -249,6 +254,7 @@ class ValidatorTool:
                 vehicle,
                 vehicle.get("home_depot"),
                 self.world.vehicle_quantity_capacity(vehicle, incident),
+                route_strategy=route_strategy,
             )
 
         contribution, quantity_reserved = self.world.mission_contribution(vehicle, incident, hospital_node)
@@ -267,6 +273,7 @@ class ValidatorTool:
             incident["location"],
             vehicle_type,
             speed_multiplier,
+            route_strategy,
         )
         if math.isinf(incident_cost):
             return self._fail(
@@ -297,6 +304,7 @@ class ValidatorTool:
                 hospital_node,
                 vehicle_type,
                 speed_multiplier,
+                route_strategy,
             )
             if math.isinf(hospital_cost):
                 return self._fail(
@@ -311,7 +319,7 @@ class ValidatorTool:
                 count_violation,
             )
 
-        required_fuel = self.world.mission_fuel_cost(vehicle, incident, hospital_node)
+        required_fuel = self.world.mission_fuel_cost(vehicle, incident, hospital_node, route_strategy)
         if math.isinf(required_fuel):
             return self._fail(
                 f"Vehicle '{vehicle_id}' cannot complete the planned route for '{incident_id}'.",

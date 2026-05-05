@@ -1,0 +1,415 @@
+
+RescueBench Modular Benchmark Runner
+  Provider: anthropic
+  Modes : ['agentkit']
+  Tiers : [1, 2, 3, 4]
+  Runs  : 1 per scenario
+  Model : claude-sonnet-4-5
+
+############################################################
+  MODE: AGENTKIT
+############################################################
+
+--- Tier 1 (5 scenarios × 1 runs) ---
+
+  [Scenario: scenario1_tier1.json, Run 1/1]
+
+  Running: scenario1_tier1 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: MED_01->INC_MED_001, FIRE_01->INC_FIRE_002
+  [AgentKit] MED_01 → INC_MED_001 | t=12.0min | resolved=False
+  [AgentKit] FIRE_01 → INC_FIRE_002 | t=13.8min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.0; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.8; released=['FIRE_01']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario2_tier1.json, Run 1/1]
+
+  Running: scenario2_tier1 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: POLICE_01->INC_TRAFFIC_001
+  [AgentKit] POLICE_01 → INC_TRAFFIC_001 | t=13.3min | resolved=False
+  [AgentKit] SUPPLY_01 → INC_SUPPLY_002 | t=56.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=48.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=56.0; released=['SUPPLY_01']; alerts=[]
+    PWRS=0.375 | Cap-PWRS=0.847 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario3_tier1.json, Run 1/1]
+
+  Running: scenario3_tier1 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: MED_01->INC_MED_001
+  [AgentKit] MED_01 → INC_MED_001 | t=4.7min | resolved=False
+  [AgentKit] LLM critique preferred B1: MED_02->INC_MED_002
+  [AgentKit] MED_02 → INC_MED_002 | t=12.7min | resolved=False
+  [AgentKit] MED_03 → INC_MED_003 | t=13.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.7; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.7; released=['MED_02']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=['MED_03']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario4_tier1.json, Run 1/1]
+
+  Running: scenario4_tier1 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: FIRE_01->INC_FIRE_001
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=10.0min | resolved=False
+  [AgentKit] LLM critique preferred B1: FIRE_02->INC_FIRE_002
+  [AgentKit] FIRE_02 → INC_FIRE_002 | t=16.2min | resolved=False
+  [AgentKit] POLICE_01 → INC_TRAFFIC_001 | t=6.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=['FIRE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.2; released=['FIRE_02']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario5_tier1.json, Run 1/1]
+
+  Running: scenario5_tier1 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: MED_01->INC_MED_001, POLICE_01->INC_HAZMAT_001
+  [AgentKit] MED_01 → INC_MED_001 | t=14.0min | resolved=False
+  [AgentKit] POLICE_01 → INC_HAZMAT_001 | t=13.3min | resolved=False
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=21.2min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=5.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=7.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=9.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=11.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=14.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=18.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=20.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=21.2; released=['FIRE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=26.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=28.0; released=['MED_01']; alerts=[]
+    PWRS=0.348 | Cap-PWRS=0.806 | Violations=0 | StepEff=1.0
+
+  Tier 1 aggregate: PWRS=0.745, Cap-PWRS=0.931, Violations=0.0
+
+--- Tier 2 (5 scenarios × 1 runs) ---
+
+  [Scenario: scenario10_tier2.json, Run 1/1]
+
+  Running: scenario10_tier2 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: SUPPLY_01->INC_SHELTER_001
+  [AgentKit] MED_01 → INC_SHELTER_001 | t=20.0min | resolved=False
+  [AgentKit] SUPPLY_01 → INC_SHELTER_001 | t=56.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=11.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=17.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=20.0; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=48.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=56.0; released=['SUPPLY_01']; alerts=[]
+    PWRS=0.000 | Cap-PWRS=0.600 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario6_tier2.json, Run 1/1]
+
+  Running: scenario6_tier2 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: FIRE_01->INC_FIRE_001
+  [AgentKit] POLICE_01 → INC_FIRE_001 | t=13.3min | resolved=False
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=37.5min | resolved=False
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=18.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=37.5; released=['FIRE_01']; alerts=[]
+    PWRS=0.000 | Cap-PWRS=0.929 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario7_tier2.json, Run 1/1]
+
+  Running: scenario7_tier2 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: POLICE_01->INC_CRASH_001
+  [AgentKit] MED_03 → INC_CRASH_001 | t=8.7min | resolved=False
+  [AgentKit] POLICE_01 → INC_CRASH_001 | t=9.2min | resolved=False
+  [AgentKit] LLM critique preferred B1: MED_01->INC_CRASH_001
+  [AgentKit] MED_01 → INC_CRASH_001 | t=12.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=9.2; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=14.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=17.3; released=['MED_03']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=19.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=25.3; released=['MED_01']; alerts=[]
+    PWRS=0.000 | Cap-PWRS=0.987 | Violations=0 | StepEff=0.3333
+
+  [Scenario: scenario8_tier2.json, Run 1/1]
+
+  Running: scenario8_tier2 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: MED_01->INC_HAZMAT_001
+  [AgentKit] FIRE_01 → INC_HAZMAT_001 | t=25.0min | resolved=False
+  [AgentKit] MED_01 → INC_HAZMAT_001 | t=2.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=18.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=25.0; released=['FIRE_01']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario9_tier2.json, Run 1/1]
+
+  Running: scenario9_tier2 | mode=agentkit | provider=anthropic
+  [AgentKit] MED_02 → INC_MED_001 | t=12.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=21.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=24.0; released=['MED_02']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=1.0
+
+  Tier 2 aggregate: PWRS=0.400, Cap-PWRS=0.903, Violations=0.0
+
+--- Tier 3 (5 scenarios × 1 runs) ---
+
+  [Scenario: scenario11_tier3.json, Run 1/1]
+
+  Running: scenario11_tier3 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: MED_01->INC_TRAIN_001
+  [AgentKit] MED_01 → INC_TRAIN_001 | t=8.0min | resolved=False
+  [AgentKit] MED_02 → INC_MINOR_003 | t=6.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=['MED_02']; alerts=[]
+  [AgentKit] LLM critique preferred B2: MED_02->INC_TRAIN_001
+  [AgentKit] MED_02 → INC_TRAIN_001 | t=13.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=8.0; released=['MED_01']; alerts=[]
+  [AgentKit] MED_01 → INC_MINOR_002 | t=7.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=11.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=14.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.3; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=20.0; released=['MED_02']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=0.75
+
+  [Scenario: scenario12_tier3.json, Run 1/1]
+
+  Running: scenario12_tier3 | mode=agentkit | provider=anthropic
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=20.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=6.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=20.0; released=['FIRE_01']; alerts=[]
+  [AgentKit] LLM critique preferred B1: FIRE_01->INC_FIRE_003
+  [AgentKit] FIRE_01 → INC_FIRE_003 | t=21.2min | resolved=False
+  [AgentKit] WAIT | Advanced to t=23.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=33.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=41.2; released=['FIRE_01']; alerts=[]
+  [AgentKit] FIRE_01 → INC_FIRE_002 | t=12.5min | resolved=False
+  [AgentKit] WAIT | Advanced to t=46.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=51.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=53.8; released=['FIRE_01']; alerts=[]
+    PWRS=0.625 | Cap-PWRS=0.625 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario13_tier3.json, Run 1/1]
+
+  Running: scenario13_tier3 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: POLICE_01->INC_TRAFFIC_002, MED_01->INC_MED_003
+  [AgentKit] POLICE_01 → INC_TRAFFIC_002 | t=6.7min | resolved=False
+  [AgentKit] MED_01 → INC_MED_003 | t=11.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=['POLICE_01']; alerts=[]
+  [AgentKit] POLICE_01 → INC_RIOT_001 | t=11.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=11.3; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=13.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=18.3; released=['POLICE_01']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario14_tier3.json, Run 1/1]
+
+  Running: scenario14_tier3 | mode=agentkit | provider=anthropic
+  [AgentKit] SUPPLY_01 → INC_SHELTER_A | t=24.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=24.0; released=['SUPPLY_01']; alerts=[]
+  [AgentKit] SUPPLY_01 → INC_SHELTER_B | t=60.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=32.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=38.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=50.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=58.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=76.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=84.0; released=['SUPPLY_01']; alerts=[]
+    PWRS=0.600 | Cap-PWRS=0.733 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario15_tier3.json, Run 1/1]
+
+  Running: scenario15_tier3 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: MED_01->INC_TROLLEY_B
+  [AgentKit] MED_01 → INC_TROLLEY_B | t=10.7min | resolved=False
+  [AgentKit] POLICE_01 → INC_TROLLEY_C | t=4.2min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.2; released=['POLICE_01']; alerts=[]
+  [AgentKit] POLICE_01 → INC_TROLLEY_A | t=11.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=6.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=9.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.7; released=['MED_01']; alerts=[]
+  [AgentKit] MED_01 → INC_TROLLEY_A | t=5.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=12.5; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.8; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.0; released=['MED_01']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=0.75
+
+  Tier 3 aggregate: PWRS=0.845, Cap-PWRS=0.872, Violations=0.0
+
+--- Tier 4 (5 scenarios × 1 runs) ---
+
+  [Scenario: scenario16_tier4.json, Run 1/1]
+
+  Running: scenario16_tier4 | mode=agentkit | provider=anthropic
+  [AgentKit] MED_01 → INC_MED_001 | t=12.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.0; released=[]; alerts=['URGENT UPDATE: A structural failure has caused the suspension bridge (edge_suspension_bridge_int02_to_int05) to collapse. The route is entirely impassable. All units must immediately calculate detours.']
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=14.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=16.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=25.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=28.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=34.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=36.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=40.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=42.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=45.3; released=['MED_01']; alerts=[]
+    PWRS=0.000 | Cap-PWRS=0.705 | Violations=0 | StepEff=1.0
+
+  [Scenario: scenario17_tier4.json, Run 1/1]
+
+  Running: scenario17_tier4 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: MED_01->INC_CRASH_001, MED_02->INC_CRASH_001
+  [AgentKit] MED_01 → INC_CRASH_001 | t=12.7min | resolved=False
+  [AgentKit] MED_02 → INC_CRASH_001 | t=12.7min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=14.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.0; released=[]; alerts=['URGENT UPDATE: A massive water main break has flooded the primary access road (edge_int02_to_hospital) to General Hospital. The facility is completely cut off from the north. Divert all active patient transports to alternative medical facilities immediately.']
+  [AgentKit] WAIT | Advanced to t=19.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=21.7; released=['MED_01', 'MED_02']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario18_tier4.json, Run 1/1]
+
+  Running: scenario18_tier4 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B2: MED_01->INC_FIRE_001
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=20.0min | resolved=False
+  [AgentKit] MED_01 → INC_FIRE_001 | t=14.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=['URGENT UPDATE: High winds have caused the fire at node_int_04 to spread north. The route to the gas station (edge_int04_to_gas) is engulfed and blocked.']
+  [AgentKit] WAIT | Advanced to t=12.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.0; released=[]; alerts=['CRITICAL UPDATE: The fire has jumped the intersection. Western access via edge_int03_to_int04 is now completely impassable. Re-evaluate all inbound unit routes.']
+  [AgentKit] WAIT | Advanced to t=17.7; released=['MED_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=25.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=28.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=35.0; released=['FIRE_01']; alerts=[]
+    PWRS=1.000 | Cap-PWRS=1.000 | Violations=0 | StepEff=0.5
+
+  [Scenario: scenario19_tier4.json, Run 1/1]
+
+  Running: scenario19_tier4 | mode=agentkit | provider=anthropic
+  [AgentKit] LLM critique preferred B1: POLICE_01->INC_RIOT_001
+  [AgentKit] POLICE_01 → INC_RIOT_001 | t=18.3min | resolved=False
+  [AgentKit] SUPPLY_01 → INC_RIOT_001 | t=48.0min | resolved=False
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=6.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=['URGENT UPDATE: A flash freeze has made the northern approach (edge_int05_to_int08) completely impassable due to black ice.', 'URGENT UPDATE: Rioters have taken advantage of the weather and erected barricades on the southern approach (edge_int07_to_int08). Reroute immediately.']
+  [AgentKit] WAIT | Advanced to t=16.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=22.5; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=25.8; released=['POLICE_01']; alerts=[]
+    PWRS=0.000 | Cap-PWRS=0.500 | Violations=0 | StepEff=0.0
+
+  [Scenario: scenario20_tier4.json, Run 1/1]
+
+  Running: scenario20_tier4 | mode=agentkit | provider=anthropic
+  [AgentKit] MED_01 → INC_CRASH_002 | t=8.7min | resolved=False
+  [AgentKit] FIRE_01 → INC_FIRE_001 | t=20.0min | resolved=False
+  [AgentKit] POLICE_01 → INC_CRASH_002 | t=9.2min | resolved=False
+  [AgentKit] MED_02 → INC_CRASH_002 | t=11.3min | resolved=False
+  [AgentKit] WAIT | Advanced to t=2.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=2.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.2; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=4.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=5.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=7.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=8.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=9.2; released=['POLICE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=10.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=11.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=12.0; released=[]; alerts=['URGENT UPDATE: A 6.0 magnitude aftershock has caused structural collapse on the main arterial route (edge_int01_to_int02). Road is completely blocked by debris. Re-evaluate immediate dispatches.']
+  [AgentKit] WAIT | Advanced to t=14.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=15.8; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=17.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=18.0; released=[]; alerts=['URGENT UPDATE: Flash flooding has washed out the suspension bridge (edge_suspension_bridge_int02_to_int05). Route is impassable to all vehicles. Reroute active units.']
+  [AgentKit] WAIT | Advanced to t=20.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=21.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=23.3; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=24.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=24.2; released=['FIRE_01']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=26.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=28.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.0; released=['MED_02']; alerts=[]
+  [AgentKit] WAIT | Advanced to t=30.7; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=34.0; released=[]; alerts=[]
+  [AgentKit] WAIT | Advanced to t=36.7; released=['MED_01']; alerts=[]
+    PWRS=0.529 | Cap-PWRS=0.780 | Violations=0 | StepEff=0.5
+
+  Tier 4 aggregate: PWRS=0.506, Cap-PWRS=0.797, Violations=0.0
+
+====================================================================================================
+  RESCUEBENCH BENCHMARK RESULTS
+====================================================================================================
+Method               Tier   PWRS     Cap-PWRS   Res.Rate   DL Adh.    Violations   Step Eff. 
+----------------------------------------------------------------------------------------------------
+AgentKit (Ours)      1      0.745    0.931      1.000      0.767      0.0          1.000     
+AgentKit (Ours)      2      0.400    0.903      1.000      0.400      0.0          0.567     
+AgentKit (Ours)      3      0.845    0.872      0.900      0.767      0.0          0.800     
+AgentKit (Ours)      4      0.506    0.797      0.800      0.500      0.0          0.500     
+====================================================================================================
+
+ABLATION SUMMARY (averaged across all tiers):
+----------------------------------------------------------------------
+Method               Mean PWRS    Mean Cap-PWRS   Mean Viol.   Mean Step Eff.
+----------------------------------------------------------------------
+AgentKit (Ours)      0.624        0.876           0.0          0.717         
+======================================================================
+
+Total runtime: 128.2s
+Results saved to: /Users/akshat/Data/UIUC/Spring 2026/Courses/CS 498 AI Agents in the Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/benchmark_results.json

@@ -1,12 +1,36 @@
 {
-  "react": {
+  "agentkit": {
     "1": {
-      "pwrs": 0.2696,
-      "cap_pwrs": 0.3667,
-      "resolution_rate": 0.4,
-      "deadline_adherence": 0.2667,
+      "pwrs": 0.7446,
+      "cap_pwrs": 0.9361,
+      "resolution_rate": 1.0,
+      "deadline_adherence": 0.7667,
       "violation_count": 0.0,
-      "step_efficiency": 0.0583
+      "step_efficiency": 1.0
+    },
+    "2": {
+      "pwrs": 0.6,
+      "cap_pwrs": 0.9057,
+      "resolution_rate": 1.0,
+      "deadline_adherence": 0.6,
+      "violation_count": 0.0,
+      "step_efficiency": 0.5667
+    },
+    "3": {
+      "pwrs": 0.845,
+      "cap_pwrs": 0.8717,
+      "resolution_rate": 0.9,
+      "deadline_adherence": 0.7667,
+      "violation_count": 0.0,
+      "step_efficiency": 0.8
+    },
+    "4": {
+      "pwrs": 0.5059,
+      "cap_pwrs": 0.8221,
+      "resolution_rate": 0.8,
+      "deadline_adherence": 0.5,
+      "violation_count": 0.0,
+      "step_efficiency": 0.5
     }
   }
 }

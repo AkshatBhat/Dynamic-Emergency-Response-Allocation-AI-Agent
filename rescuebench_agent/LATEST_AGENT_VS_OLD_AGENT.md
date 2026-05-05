@@ -26,11 +26,15 @@ is a hybrid planner.
 What it now does:
 
 - generates feasible next-dispatch candidates
-- simulates candidates on cloned world states
-- scores candidates on projected benchmark outcomes
+- assembles same-time dispatch bundles from those candidates
+- simulates bundles on cloned world states
+- scores bundles on projected benchmark outcomes
+- adapts search depth and bundle size to the current scenario state
 - accounts for mission completion time, not only incident arrival time
 - penalizes wasting scarce vehicles that may be needed elsewhere
-- can use the LLM to arbitrate among shortlisted candidates
+- penalizes fragile bundles that depend on likely disrupted routes
+- can use the LLM to arbitrate among shortlisted bundles when top plans are
+  close, but blocks clearly worse LLM overrides
 
 What still remains deterministic:
 
@@ -65,8 +69,8 @@ The old agent was best described as:
 
 The latest modular agent is better described as:
 
-- deterministic execution and simulation with hybrid candidate-based planning
-  and optional LLM arbitration
+- deterministic execution and simulation with hybrid bundle-based planning and
+  guarded LLM arbitration over structured alternatives
 
 So the latest version is not a pure LLM agent, but it is materially more
 agentic and more defensible than the original monolithic `agentkit`.

@@ -48,7 +48,10 @@ Relevant files:
 What is now implemented:
 
 - feasible next-dispatch candidate generation
-- cloned-world rollout projection for candidate evaluation
+- adaptive same-time dispatch bundle generation
+- cloned-world rollout projection for bundle evaluation
+- adaptive search depth and bundle size based on open incidents, available
+  vehicles, quantity-heavy incidents, and pending triggers
 - scoring on projected:
   - PWRS
   - Cap-PWRS
@@ -56,13 +59,19 @@ What is now implemented:
   - deadline adherence
 - completion-time-aware scoring for transport missions
 - scarcity-aware and future-option-aware heuristics
-- optional LLM selection among shortlisted candidates
+- disruption-risk-aware bundle scoring against pending trigger edges
+- unresolved-risk scoring for projected post-bundle states
+- incident-spread reward and over-concentration penalty
+- optional LLM selection among shortlisted bundles
+- conservative LLM override gating so the LLM cannot replace a clearly better
+  heuristic plan with a materially worse one
 - memory entries for blocked states, LLM choices, and dynamic alerts
 
 What the LLM currently does:
 
 - ethical tie-breaking when enabled
-- candidate arbitration when options are close or dynamic context is active
+- bundle arbitration when feasible plans are close or dynamic context makes the
+  tradeoff ambiguous
 
 What the LLM does not currently do:
 
@@ -117,9 +126,14 @@ Interpretation:
 
 - The simulator still reroutes from the last reached node, not a continuous
   along-edge position.
-- The current `agentkit` still plans one dispatch at a time.
-- The LLM role is still modest compared with a more strongly agentic ReAct or
-  bundle-selection design.
+- The current `agentkit` now does bundle selection, but only over a small
+  deterministic shortlist rather than a larger search space or open-ended
+  tool-using loop.
+- The LLM role is stronger than in the monolith, but it still arbitrates over
+  structured alternatives instead of driving the full control loop.
+- Under the current benchmark and simulator, Tiers 1, 2, and 4 still leave
+  limited headroom over the deterministic baseline, so the strongest validated
+  gain remains Tier 3.
 
 ## Practical Conclusion
 
@@ -132,4 +146,6 @@ The current modular agent is stable enough to report as:
   `agentkit`
 
 If more engineering time is available later, the next meaningful upgrade is
-bundle-level joint action planning plus a larger LLM role in bundle selection.
+larger-search bundle planning, contingency-aware lookahead over multiple future
+events, or a stronger multi-step LLM critique loop on top of the current bundle
+selector.
