@@ -29,3 +29,33 @@ We are cautious about this and acknowledge it explicitly in the conclusion. The 
 **Q5: Could the Tier 4 problem be solved with a different design — for example, allowing vehicles to be reassigned mid-mission?**
 
 Yes, that is the most direct fix. If a vehicle could be recalled or rerouted after a road closure fires, the agent could react and redirect it to a still-reachable incident. The current no-recall constraint was a deliberate design choice to keep the benchmark grounded in real-world emergency dispatch, where mid-mission redirects carry physical and coordination costs. Adding a recall action with an associated penalty — for example, partial credit lost and delay incurred — would be a natural extension and would make Tier 4 a genuine algorithmic challenge rather than a structural one.
+
+---
+
+**Q6: How did you generate the benchmark scenarios? Was any of the data synthetic?**
+
+All 20 scenarios are hand-designed. Each one specifies a small city graph with nodes and weighted edges representing travel times, a fleet of vehicles with specific capability types, and a set of incidents with required capabilities, deadlines, and severity scores. There is no real-world city data — the graphs are synthetic and purpose-built to stress specific failure modes per tier. The advantage is full control over what each scenario tests; the tradeoff is that the scenarios do not reflect the messiness of real dispatch environments.
+
+---
+
+**Q7: How did you test your evaluation metrics, and why did you choose PWRS specifically?**
+
+PWRS was chosen because it directly mirrors what matters in emergency dispatch — the right resources arriving on time. Severity-weighting ensures that failing a critical incident costs more than failing a minor one. We validated the metric by manually checking edge cases in code: late arrivals score zero, wrong vehicle types score zero, partial coverage on a multi-vehicle incident gets no credit until all requirements are met. The grading is a deterministic Python computation with no LLM involvement, so there is no subjectivity in the scores.
+
+---
+
+**Q8: How did you come up with the rule-based baseline?**
+
+The rule-based baseline is a greedy algorithm that sorts open incidents by severity and deadline, then dispatches the first available vehicle that has the required capabilities. No lookahead, no LLM. We chose it because it represents the simplest reasonable dispatcher — the kind of logic a human operator might follow under time pressure. It is a meaningful lower bound: if AgentKit cannot beat it, the added complexity is not justified. The fact that AgentKit matches it on Tiers 1, 2, and 4 and only pulls ahead on Tier 3 tells us the improvement is targeted, not arbitrary.
+
+---
+
+**Q9: Did you test with other LLMs, like Gemini, as the agent's brain?**
+
+Yes — the codebase supports both Claude and Gemini as drop-in providers via a provider flag. We implemented and tested Gemini support during development. The primary benchmarked results in this presentation used Claude Sonnet 4.5. A formal cross-model comparison was out of scope for this project but would be a natural next step, particularly to see whether the LLM arbitration step produces different override behavior across model families.
+
+---
+
+**Q10: Did you run any ablation study to isolate the contribution of each component?**
+
+Not a formal one, but the three-way comparison functions as a partial ablation. Zero-shot removes all structure and gives the LLM full control. The rule-based baseline removes the LLM and lookahead entirely. AgentKit is the full system. What we did not isolate is lookahead-only without LLM arbitration, or LLM arbitration without lookahead. Those two ablations would sharpen the attribution — particularly confirming that the Tier 3 gain is entirely from lookahead and not from the arbitration path. That is a gap we would address in follow-up work.
