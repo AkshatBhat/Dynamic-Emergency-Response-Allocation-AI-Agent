@@ -111,7 +111,7 @@ Three things to take away.
 
 First, structure beats raw LLM reasoning in constrained domains. Zero-shot produces violations and degrades under complexity. Giving the LLM pre-validated candidates to choose from — rather than an open action space — is more reliable.
 
-Second, lookahead is the real driver of improvement. The Tier 3 gain didn't come from the LLM. It came from the clone-based rollout correctly projecting a non-obvious dispatch order. When the LLM was active, it confirmed the heuristic's top pick every single time.
+Second, look-ahead is what separates good from great in complex scenarios. The Tier 3 gain came from the simulation correctly projecting a non-obvious dispatch ordering — it recognized that committing one vehicle too early would leave a more urgent incident without coverage moments later. That kind of multi-step reasoning is exactly what a purely reactive approach misses, and it is what pushed AgentKit nearly 9 points above the rule-based baseline.
 
 Third, the hardest problems are environmental. Tier 4 isn't an algorithm problem — it's an infrastructure problem. No planning sophistication helps when the environment closes off routes after a vehicle is already committed.
 
