@@ -1,0 +1,70 @@
+{
+  "deterministic": {
+    "1": {
+      "pwrs": 0.4964,
+      "cap_pwrs": 0.7171,
+      "resolution_rate": 1.0,
+      "deadline_adherence": 0.4,
+      "violation_count": 0.0,
+      "step_efficiency": 1.0
+    },
+    "2": {
+      "pwrs": 0.4,
+      "cap_pwrs": 0.7138,
+      "resolution_rate": 0.8,
+      "deadline_adherence": 0.4,
+      "violation_count": 0.0,
+      "step_efficiency": 0.5
+    },
+    "3": {
+      "pwrs": 0.41,
+      "cap_pwrs": 0.453,
+      "resolution_rate": 0.5,
+      "deadline_adherence": 0.3667,
+      "violation_count": 0.0,
+      "step_efficiency": 0.9
+    },
+    "4": {
+      "pwrs": 0.3059,
+      "cap_pwrs": 0.6258,
+      "resolution_rate": 0.5,
+      "deadline_adherence": 0.3,
+      "violation_count": 0.0,
+      "step_efficiency": 0.4
+    }
+  },
+  "agentkit": {
+    "1": {
+      "pwrs": 0.8162,
+      "cap_pwrs": 0.8583,
+      "resolution_rate": 1.0,
+      "deadline_adherence": 0.8,
+      "violation_count": 0.0,
+      "step_efficiency": 1.0
+    },
+    "2": {
+      "pwrs": 0.4,
+      "cap_pwrs": 0.7138,
+      "resolution_rate": 0.8,
+      "deadline_adherence": 0.4,
+      "violation_count": 0.0,
+      "step_efficiency": 0.5
+    },
+    "3": {
+      "pwrs": 0.4767,
+      "cap_pwrs": 0.5361,
+      "resolution_rate": 0.5667,
+      "deadline_adherence": 0.4333,
+      "violation_count": 0.0,
+      "step_efficiency": 1.0
+    },
+    "4": {
+      "pwrs": 0.3059,
+      "cap_pwrs": 0.6344,
+      "resolution_rate": 0.7,
+      "deadline_adherence": 0.3,
+      "violation_count": 0.0,
+      "step_efficiency": 0.5
+    }
+  }
+}

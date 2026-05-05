@@ -1,0 +1,12 @@
+{
+  "react": {
+    "1": {
+      "pwrs": 0.2696,
+      "cap_pwrs": 0.3667,
+      "resolution_rate": 0.4,
+      "deadline_adherence": 0.2667,
+      "violation_count": 0.0,
+      "step_efficiency": 0.0583
+    }
+  }
+}
