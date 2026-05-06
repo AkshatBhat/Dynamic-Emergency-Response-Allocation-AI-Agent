@@ -3,6 +3,8 @@
 This package contains the active modular implementation used to run RescueBench
 experiments.
 
+![AgentKit key components diagram](../figures/agentkit-key-components-diagram.png)
+
 ## Main Components
 
 - [`benchmark.py`](./benchmark.py): benchmark orchestration
@@ -59,6 +61,10 @@ python3 -m rescuebench_agent --mode deterministic --tier all --runs 3
 python3 -m rescuebench_agent --mode agentkit --tier all --runs 3 --provider anthropic
 python3 -m rescuebench_agent --mode zero_shot --tier all --runs 1 --provider anthropic
 ```
+
+## Dynamic Replanning Example
+
+![Dynamic replanning injection loop](../figures/RescueBench-Dynamic-Replanning-injection-loop.png)
 
 ## Additional Notes
 

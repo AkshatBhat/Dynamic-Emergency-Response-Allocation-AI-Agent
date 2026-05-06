@@ -15,6 +15,8 @@ This repository contains both final course deliverables:
 - the **RescueBench benchmark** and its evaluation materials
 - the **modular RescueBench agent implementation** used in the final agent paper
 
+![Example RescueBench scenario and city graph](./figures/example_json_scenario_and_graph.jpeg)
+
 The active code on `main` is the modular package in
 [`rescuebench_agent/`](./rescuebench_agent). Legacy monolithic code and older
 artifacts are preserved under
