@@ -13,6 +13,8 @@ for reference only.
 
 ## What To Read First
 
+- Submission materials index:
+  [`SUBMISSION_GUIDE.md`](./SUBMISSION_GUIDE.md)
 - Benchmark overview and task suite:
   [`benchmark/README.md`](./benchmark/README.md)
 - Agent overview and run instructions:
