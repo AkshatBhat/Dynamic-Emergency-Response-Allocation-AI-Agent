@@ -2,7 +2,8 @@
 
 ## Old agent in the monolith
 
-The original `agentkit` in `agent/AgentImplementation.py` was mostly a
+The original `agentkit` in
+`archived_legacy_not_current/legacy_agent/agent/AgentImplementation.py` was mostly a
 deterministic greedy dispatcher.
 
 What it mainly did:

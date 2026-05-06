@@ -2,10 +2,12 @@
 
 ## Goal
 
-This folder is a clean refactor of the original monolithic implementation in
-`agent/AgentImplementation.py`. The old file is preserved unchanged so the
-course submission history remains intact. The new package exists to make the
-agent code reviewable, extensible, and safer to evolve.
+This folder is a clean refactor of the original monolithic implementation now
+archived at
+`archived_legacy_not_current/legacy_agent/agent/AgentImplementation.py`. The old file
+is preserved unchanged so the course submission history remains intact. The new
+package exists to make the agent code reviewable, extensible, and safer to
+evolve.
 
 Note:
 
@@ -33,8 +35,8 @@ Note:
 
 - Centralizes benchmark path resolution.
 - Fixes one structural issue in the old file: the old runner assumed benchmark
-  JSON lived under `agent/benchmark`, while the repo actually has a top-level
-  `benchmark/` directory.
+  JSON lived under the legacy `agent/` tree, while the repo actually has a
+  top-level `benchmark/` directory.
 
 ### `scenarios.py`
 
@@ -146,7 +148,7 @@ the new package runs cleanly on Python 3.9.
 ### Correct benchmark path resolution
 
 The new package resolves benchmark files from the repository root instead of
-assuming they live under `agent/`.
+assuming they live under the legacy `agent/` tree.
 
 ## What This Refactor Intentionally Does Not Change Yet
 
