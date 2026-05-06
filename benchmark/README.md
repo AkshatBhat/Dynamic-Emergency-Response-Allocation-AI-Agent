@@ -29,6 +29,9 @@ RescueBench is organized into four tiers with five scenarios per tier:
 
 Total scenarios: **20**
 
+The figure below illustrates a representative benchmark instance using the Tier
+2 Scenario 7 city visualization.
+
 ![Tier 2 Scenario 7 benchmark visualization](../figures/example_tier2scenario7_visualization_graph.png)
 
 ## Inputs

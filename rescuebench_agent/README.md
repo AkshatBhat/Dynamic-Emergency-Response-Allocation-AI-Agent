@@ -3,6 +3,9 @@
 This package contains the active modular implementation used to run RescueBench
 experiments.
 
+The figure below summarizes the main components of the modular `agentkit`
+implementation.
+
 ![AgentKit key components diagram](../figures/agentkit-key-components-diagram.png)
 
 ## Main Components
@@ -63,6 +66,9 @@ python3 -m rescuebench_agent --mode zero_shot --tier all --runs 1 --provider ant
 ```
 
 ## Dynamic Replanning Example
+
+The figure below highlights the dynamic replanning loop used in the more
+disruption-heavy RescueBench scenarios.
 
 ![Dynamic replanning injection loop](../figures/RescueBench-Dynamic-Replanning-injection-loop.png)
 
