@@ -1,20 +1,51 @@
 # Dynamic Emergency Response Allocation AI Agent
 
-This repository contains the RescueBench benchmark scenarios and the
-grader-facing modular agent implementation in
-[`rescuebench_agent/`](./rescuebench_agent).
+This repository contains both final course deliverables:
 
-## Main Code Path
+- the **RescueBench benchmark** and its evaluation materials
+- the **modular RescueBench agent implementation** used in the final agent paper
 
-The active implementation on `main` is the modular package:
+The reviewer-facing code on `main` is the modular package in
+[`rescuebench_agent/`](./rescuebench_agent). Legacy monolithic code and older
+artifacts are preserved under
+[`archived_legacy_not_current/`](./archived_legacy_not_current) and are not the
+primary implementation for grading.
 
-- [`rescuebench_agent/`](./rescuebench_agent)
-- benchmark scenarios: [`benchmark/`](./benchmark)
-- final agent paper draft: [`new-agent-paper/`](./new-agent-paper)
+## What To Read First
 
-Legacy material that is no longer meant to be the primary review surface has
-been moved under
-[`archived_legacy_not_current/`](./archived_legacy_not_current).
+- Benchmark overview and task suite:
+  [`benchmark/README.md`](./benchmark/README.md)
+- Agent overview and run instructions:
+  [`rescuebench_agent/README.md`](./rescuebench_agent/README.md)
+- Modular implementation notes:
+  [`rescuebench_agent/docs/`](./rescuebench_agent/docs)
+
+## Submission Materials
+
+### Benchmark paper materials
+
+- Final benchmark paper:
+  [`benchmark_papers/Group2_Final_Benchmark_Paper.pdf`](./benchmark_papers/Group2_Final_Benchmark_Paper.pdf)
+- Benchmark scenarios and resources:
+  [`benchmark/`](./benchmark)
+- Benchmark task specifications:
+  [`benchmark/TASK_SPECIFICATIONS.md`](./benchmark/TASK_SPECIFICATIONS.md)
+
+### Agent paper materials
+
+- Final agent paper:
+  [`agent_papers/Group2_Final_Agent_Paper.pdf`](./agent_papers/Group2_Final_Agent_Paper.pdf)
+- Agent implementation:
+  [`rescuebench_agent/`](./rescuebench_agent)
+- Agent implementation notes:
+  [`rescuebench_agent/docs/`](./rescuebench_agent/docs)
+
+### Presentation materials
+
+- Slides:
+  [`presentations/CS 498 DK3_4_ Dynamic Emergency Response Allocation Agent.pdf`](./presentations/CS%20498%20DK3_4_%20Dynamic%20Emergency%20Response%20Allocation%20Agent.pdf)
+- Supporting notes:
+  [`presentations/`](./presentations)
 
 ## Setup
 
@@ -31,38 +62,74 @@ been moved under
    pip install -r requirements.txt
    ```
 
-## Run The Modular Agent
+Optional environment variables for LLM-backed modes:
 
-Run the modular benchmark package:
+- `ANTHROPIC_API_KEY`
+- `GEMINI_API_KEY`
 
-```bash
-python3 -m rescuebench_agent --mode agentkit --tier all --runs 1
-```
+## Quick Start
 
-Run the deterministic baseline:
+Run the deterministic benchmark baseline:
 
 ```bash
 python3 -m rescuebench_agent --mode deterministic --tier all --runs 1
 ```
 
-## Visualizer
-
-Default run:
+Run the modular `agentkit` implementation:
 
 ```bash
-python3 visualize_city.py
+python3 -m rescuebench_agent --mode agentkit --tier all --runs 1
 ```
 
-## Repo Layout
+Run the full benchmark suite for a single tier:
 
-- [`rescuebench_agent/`](./rescuebench_agent): active modular implementation
-- [`benchmark/`](./benchmark): RescueBench scenario files
-- [`new-agent-paper/`](./new-agent-paper): current paper draft and assets
-- [`archived_legacy_not_current/`](./archived_legacy_not_current): legacy
-  monolith, older paper artifacts, and saved run outputs
-- [`visualize_city.py`](./visualize_city.py): city graph visualization script
+```bash
+python3 -m rescuebench_agent --mode all --tier 1 --runs 1
+```
 
-## Reference Documents
+The benchmark runner writes aggregated output to
+`rescuebench_agent/benchmark_results.json`.
 
-- [`RescueBench Base City Schema_ Conceptual Design Document.pdf`](./RescueBench%20Base%20City%20Schema_%20Conceptual%20Design%20Document.pdf)
-- [`RescueBench JSON Data Dictionary.pdf`](./RescueBench%20JSON%20Data%20Dictionary.pdf)
+## Reproducing Final Results
+
+The package supports the same modes discussed in the final papers:
+
+- `deterministic`
+- `zero_shot`
+- `react`
+- `ablated`
+- `agentkit`
+
+Example reproductions:
+
+```bash
+python3 -m rescuebench_agent --mode deterministic --tier all --runs 3
+python3 -m rescuebench_agent --mode agentkit --tier all --runs 3 --provider anthropic
+python3 -m rescuebench_agent --mode zero_shot --tier all --runs 1 --provider anthropic
+```
+
+Use [`rescuebench_agent/README.md`](./rescuebench_agent/README.md) for a fuller
+description of modes, outputs, and expected dependencies.
+
+## Benchmark Utilities
+
+Visualizer:
+
+```bash
+python3 benchmark/visualize_city.py
+```
+
+Conceptual and schema references:
+
+- [`benchmark/RescueBench Base City Schema_ Conceptual Design Document.pdf`](./benchmark/RescueBench%20Base%20City%20Schema_%20Conceptual%20Design%20Document.pdf)
+- [`benchmark/RescueBench JSON Data Dictionary.pdf`](./benchmark/RescueBench%20JSON%20Data%20Dictionary.pdf)
+
+## Repository Layout
+
+- [`benchmark/`](./benchmark): benchmark scenarios, schema docs, visualizer, and benchmark-facing documentation
+- [`rescuebench_agent/`](./rescuebench_agent): active modular agent implementation and benchmark runner
+- [`agent_papers/`](./agent_papers): benchmarked agent paper PDFs
+- [`benchmark_papers/`](./benchmark_papers): benchmark paper PDFs
+- [`presentations/`](./presentations): presentation deck and speaking materials
+- [`assignments/`](./assignments): earlier milestone submissions
+- [`archived_legacy_not_current/`](./archived_legacy_not_current): archived monolithic code, old drafts, and saved run outputs

@@ -21,7 +21,7 @@ Practical implication:
 ## Latest modular agent
 
 The current modular `agentkit` in
-[agents/rescue_agent.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/agents/rescue_agent.py:1)
+[agents/rescue_agent.py](../agents/rescue_agent.py)
 is a hybrid planner.
 
 What it now does:

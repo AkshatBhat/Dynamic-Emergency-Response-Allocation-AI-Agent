@@ -15,7 +15,7 @@ Note:
 - Some "next phase" items mentioned below have since been implemented in the
   modular package.
 - For the current agent/world-model status, use
-  [AGENT_UPGRADE_TRACKER.md](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/AGENT_UPGRADE_TRACKER.md:1).
+  [AGENT_UPGRADE_TRACKER.md](./AGENT_UPGRADE_TRACKER.md).
 
 ## File-by-File Justification
 

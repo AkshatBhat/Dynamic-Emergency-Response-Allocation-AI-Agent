@@ -18,9 +18,9 @@ This file reflects the current modular implementation status.
 
 Relevant files:
 
-- [world.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/world.py:1)
-- [tools.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/tools.py:1)
-- [scenarios.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/scenarios.py:1)
+- [world.py](../world.py)
+- [tools.py](../tools.py)
+- [scenarios.py](../scenarios.py)
 
 What is now implemented:
 
@@ -42,8 +42,8 @@ What is now implemented:
 
 Relevant files:
 
-- [agents/rescue_agent.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/agents/rescue_agent.py:1)
-- [agents/planning.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/agents/planning.py:1)
+- [agents/rescue_agent.py](../agents/rescue_agent.py)
+- [agents/planning.py](../agents/planning.py)
 
 What is now implemented:
 
@@ -74,7 +74,7 @@ What the LLM does not currently do:
 
 Relevant file:
 
-- [tests/test_agent_generalization.py](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/rescuebench_agent/tests/test_agent_generalization.py:1)
+- [tests/test_agent_generalization.py](../tests/test_agent_generalization.py)
 
 Coverage added:
 
@@ -91,7 +91,7 @@ Purpose:
 
 Source:
 
-- [regression_all_tiers_after_policy.txt](/Users/akshat/Data/UIUC/Spring%202026/Courses/CS%20498%20AI%20Agents%20in%20the%20Wild/Project/Dynamic-Emergency-Response-Allocation-AI-Agent/archived_legacy_not_current/evaluation_outputs/rescuebench_agent/regression_all_tiers_after_policy.txt:1)
+- [regression_all_tiers_after_policy.txt](../../archived_legacy_not_current/evaluation_outputs/rescuebench_agent/regression_all_tiers_after_policy.txt)
 
 ### Deterministic
 
