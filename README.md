@@ -1,5 +1,13 @@
 # Dynamic Emergency Response Allocation AI Agent
 
+This project studies emergency-response planning through two connected
+deliverables: **RescueBench**, a 20-scenario benchmark for dispatch,
+constraint satisfaction, ethical prioritization, and dynamic replanning, and a
+modular **RescueBench agent** that operates on those scenarios using
+deterministic simulation, validation, and optional LLM-based decision support.
+Together, the benchmark and agent are meant to support reproducible evaluation
+of resource-allocation behavior in structured emergency settings.
+
 This repository contains both final course deliverables:
 
 - the **RescueBench benchmark** and its evaluation materials
