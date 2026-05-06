@@ -1,6 +1,7 @@
 # Dynamic Emergency Response Allocation AI Agent
 
-Final Project for the course - UIUC CS 498: AI Agents in the Wild (Spring 2026).
+**Final Project for the course - UIUC CS 498: AI Agents in the Wild (Spring 2026)**
+
 This project studies emergency-response planning through two connected
 deliverables: **RescueBench**, a 20-scenario benchmark for dispatch,
 constraint satisfaction, ethical prioritization, and dynamic replanning, and a
