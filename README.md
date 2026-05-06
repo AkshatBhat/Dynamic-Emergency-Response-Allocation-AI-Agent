@@ -5,11 +5,11 @@ This repository contains both final course deliverables:
 - the **RescueBench benchmark** and its evaluation materials
 - the **modular RescueBench agent implementation** used in the final agent paper
 
-The reviewer-facing code on `main` is the modular package in
+The active code on `main` is the modular package in
 [`rescuebench_agent/`](./rescuebench_agent). Legacy monolithic code and older
 artifacts are preserved under
-[`archived_legacy_not_current/`](./archived_legacy_not_current) and are not the
-primary implementation for grading.
+[`archived_legacy_not_current/`](./archived_legacy_not_current) and are kept
+for reference only.
 
 ## What To Read First
 
@@ -126,7 +126,7 @@ Conceptual and schema references:
 
 ## Repository Layout
 
-- [`benchmark/`](./benchmark): benchmark scenarios, schema docs, visualizer, and benchmark-facing documentation
+- [`benchmark/`](./benchmark): benchmark scenarios, schema docs, visualizer, and benchmark documentation
 - [`rescuebench_agent/`](./rescuebench_agent): active modular agent implementation and benchmark runner
 - [`agent_papers/`](./agent_papers): benchmarked agent paper PDFs
 - [`benchmark_papers/`](./benchmark_papers): benchmark paper PDFs

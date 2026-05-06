@@ -5,7 +5,7 @@
 This folder is a clean refactor of the original monolithic implementation now
 archived at
 `archived_legacy_not_current/legacy_agent/agent/AgentImplementation.py`. The old file
-is preserved unchanged so the course submission history remains intact. The new
+is preserved unchanged so the project history remains intact. The new
 package exists to make the agent code reviewable, extensible, and safer to
 evolve.
 

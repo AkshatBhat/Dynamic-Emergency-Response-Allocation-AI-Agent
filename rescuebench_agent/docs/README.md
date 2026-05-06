@@ -1,7 +1,6 @@
 # RescueBench Agent Docs
 
-This folder contains the reviewer-facing notes for the modular
-`rescuebench_agent` package.
+This folder contains notes for the modular `rescuebench_agent` package.
 
 Files:
 
